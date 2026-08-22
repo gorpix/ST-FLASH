@@ -1,0 +1,70 @@
+FLASH CAPSULE GENERATOR — MANUAL TRIM WORKFLOW
+
+Do not continue the roleplay. Output only one <flash_capsule>.
+
+The immediately preceding assistant message has been deliberately trimmed. Its final dialogue/action beat is A's opening FLASH beat and is the exact point to which the user will reply through the fast model.
+
+Treat the entire retained assistant message as canonical. Ignore any continuation or Internal States that originally appeared after the retained text. Using the complete available roleplay context and the last valid Internal States from before the retained assistant message, describe the situation immediately after the retained opening beat and immediately before the user's next roleplay reply.
+
+The retained assistant message will remain in chat history, so do not copy or rewrite its prose in the capsule.
+
+Aim for approximately 1,000–1,500 tokens and do not exceed roughly 1,500. Preserve enough recent history to support several immediate back-and-forth turns. Use less only when the scene is genuinely simple; do not add filler or irrelevant lore.
+
+The receiving FLASH preset already supplies POV, tense, prose and dialogue style, formatting, response length, user authority, general FLASH limits, and delta instructions. Do not repeat them.
+
+Include only established information needed for the current exchange:
+
+- current time, place, positions, proximity, conditions, and relevant objects;
+- the identity of the user-controlled character;
+- authorized present NPCs;
+- each NPC's essential relationship context, voice, immediate goal, current communicative intent, and knowledge boundaries;
+- a compact chronological history of the current scene and its immediate lead-up;
+- active conversational topics, tensions, questions, and unresolved threads;
+- concrete changes established by the retained assistant message since the last valid Internal States;
+- pending proposals, commitments, and unfinished actions;
+- restrictions unique to this scene.
+
+RECENT_HISTORY should usually contain 5–10 concise chronological bullets. Include why the characters are here, the most relevant recent actions or disclosures, decisions already made, and the exchanges that explain the current emotional or practical stakes. Do not recap unrelated earlier scenes.
+
+Communicative intent is the meaning an NPC currently wants to convey, not drafted dialogue or a mandatory outcome. It may change after the user's actual reply.
+
+Use only established facts. Mark unverified information as CLAIM. Keep secrets under the NPCs who know them. Do not predict the exchange, script dialogue, invent thoughts, summarize full character sheets, reproduce broad lore, or generate complete Internal States.
+
+<flash_capsule>
+BOUNDARY: Immediately after the retained assistant opening beat and before the next roleplay user reply.
+USER_CHARACTER: [name or identity]
+
+SCENE:
+  TIME_PLACE: [current time and exact local place]
+  PHYSICAL_STATE: [positions, proximity, orientation, and relevant conditions]
+  RELEVANT_OBJECTS: [nearby or held objects that matter, or NONE]
+  CURRENT_SITUATION: [what is happening and why this exchange is occurring]
+
+RECENT_HISTORY:
+- [oldest relevant scene event]
+- [next relevant action, disclosure, or decision]
+- [continue chronologically through the retained opening beat]
+
+ACTIVE_TOPICS_AND_OPEN_THREADS:
+- [current topic, question, tension, promise, or unresolved matter]
+
+AUTHORIZED_NPCS:
+- [NPC name]
+  ROLE_RELATIONSHIP: [relevant relationship history and present dynamic]
+  VOICE: [brief distinguishing cues]
+  IMMEDIATE_GOAL: [established present goal or NONE]
+  COMMUNICATIVE_INTENT: [meaning presently intended for the user; no drafted dialogue, or NONE]
+  KNOWS: [relevant facts known by this NPC or NONE]
+  DOES_NOT_KNOW: [important knowledge boundary or NONE]
+  CLAIMS_HEARD: [relevant unverified claims or NONE]
+
+CHANGES_SINCE_LAST_INTERNAL_STATES:
+  [Only concrete changes established by the retained assistant message, or NONE]
+
+PENDING:
+  UNFINISHED_ACTION: [action in progress or NONE]
+  PROPOSALS: [unaccepted offers, requests, threats, or plans, or NONE]
+  COMMITMENTS: [accepted or reaffirmed commitments, or NONE]
+
+SCENE_SPECIFIC_LIMITS: [unique restrictions or NONE]
+</flash_capsule>

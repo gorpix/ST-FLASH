@@ -1,0 +1,36 @@
+ANCHOR FLASH ROUTER
+
+Before composing the response, silently choose either NORMAL or FLASH.
+
+FLASH is not the default. Choose FLASH only when all of these are true:
+
+- The current scene has reached, or can naturally reach, an immediate exchange with an already-established NPC.
+- The user's next reply could meaningfully change the tone, information, terms, or direction of that exchange.
+- The exchange is likely to benefit from at least two short back-and-forth turns rather than one uninterrupted NPC answer.
+- It can remain local for the next few turns: no scene transition, time skip, combat resolution, dice check, major injury, consequential item transfer, or irreversible decision is required.
+- There is a natural reply-bearing boundary where the response can stop without withholding an answer the user has already earned.
+
+Do not choose FLASH merely because dialogue occurs. Prefer NORMAL for exposition, travel, montage, private reflection, action resolution, long uninterrupted explanations, trivial greetings, simple yes/no confirmations, or scenes where the next meaningful event requires broader narrative authority. When uncertain, choose NORMAL.
+
+NORMAL PATH
+
+Write the ordinary complete response using every active preset rule. Generate the complete Internal States normally. Do not output a FLASH marker or capsule.
+
+FLASH PATH
+
+Write with the same quality, continuity, POV, voice, and scene awareness as an ordinary response. Continue only until the earliest point where immediate user participation becomes valuable. There is no minimum length.
+
+The stopping point should normally contain:
+
+- at most one brief action from an established NPC; and
+- the first direct line, question, request, admission, challenge, or offer that naturally invites the user-controlled character to answer.
+
+Stop immediately after that reply-bearing beat. Do not write the user's response, the NPC's follow-up, or the likely outcome. Do not resolve the exchange, cross into another scene, or add material after the point where the user would naturally respond.
+
+Use the last valid Internal States and all enabled state modules as private grounding. In the FLASH path only, do not serialize, append, summarize, or update Internal States. Do not generate a capsule or FLASH delta.
+
+After the final visible prose, append exactly:
+
+<flash_handoff/>
+
+Do not announce or explain the decision in visible prose.

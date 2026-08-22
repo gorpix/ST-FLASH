@@ -1,0 +1,380 @@
+{
+    "chat_completion_source": "custom",
+    "temperature": 1,
+    "frequency_penalty": 0,
+    "presence_penalty": 0,
+    "top_p": 0.95,
+    "top_k": 0,
+    "top_a": 0,
+    "min_p": 0,
+    "repetition_penalty": 1,
+    "max_context_unlocked": true,
+    "group_models": false,
+    "sort_models": "alphabetically",
+    "openai_model": "gpt-4-turbo",
+    "claude_model": "claude-sonnet-4-5",
+    "openrouter_model": "OR_Website",
+    "openrouter_use_fallback": false,
+    "openrouter_providers": [],
+    "openrouter_quantizations": [],
+    "openrouter_allow_fallbacks": true,
+    "openrouter_middleout": "on",
+    "tool_reasoning_mode": "disabled",
+    "ai21_model": "jamba-large",
+    "mistralai_model": "mistral-large-latest",
+    "cohere_model": "command-r-plus",
+    "perplexity_model": "sonar-pro",
+    "groq_model": "llama-3.3-70b-versatile",
+    "chutes_model": "deepseek-ai/DeepSeek-V3-0324",
+    "siliconflow_model": "deepseek-ai/DeepSeek-V3",
+    "siliconflow_endpoint": "global",
+    "minimax_model": "MiniMax-M2.7",
+    "minimax_endpoint": "global",
+    "electronhub_model": "gpt-4o-mini",
+    "nanogpt_model": "gpt-4o-mini",
+    "nanogpt_provider": "",
+    "nanogpt_payg_override": false,
+    "deepseek_model": "deepseek-v4-pro",
+    "aimlapi_model": "chatgpt-4o-latest",
+    "xai_model": "grok-3-beta",
+    "pollinations_model": "openai",
+    "pollinations_endpoint": "authenticated",
+    "moonshot_model": "kimi-latest",
+    "fireworks_model": "accounts/fireworks/models/kimi-k2-instruct",
+    "cometapi_model": "gpt-4o",
+    "custom_model": "kimi-k2.7-code-highspeed",
+    "custom_url": "http://127.0.0.1:8317/v1",
+    "custom_include_body": "",
+    "custom_exclude_body": "",
+    "custom_include_headers": "",
+    "custom_prompt_post_processing": "semi",
+    "google_model": "gemini-2.5-pro",
+    "vertexai_model": "gemini-2.5-pro",
+    "zai_model": "glm-4.6",
+    "zai_endpoint": "common",
+    "workers_ai_model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "workers_ai_account_id": "",
+    "openai_max_context": 200000,
+    "openai_max_tokens": 100000,
+    "names_behavior": 0,
+    "send_if_empty": "",
+    "impersonation_prompt": "[Write your next reply from the point of view of {{user}}, using the chat history so far as a guideline for the writing style of {{user}}. Write 1 reply only in internet RP style. Don't write as {{char}} or system. Don't describe actions of {{char}}.]",
+    "new_chat_prompt": "[Start a new Chat]",
+    "new_group_chat_prompt": "[Start a new group chat. Group members: {{group}}]",
+    "new_example_chat_prompt": "[Example Chat]",
+    "continue_nudge_prompt": "[Continue your last message without repeating its original content.]",
+    "bias_preset_selected": "Default (none)",
+    "reverse_proxy": "",
+    "wi_format": "{0}",
+    "scenario_format": "{{scenario}}",
+    "personality_format": "{{personality}}",
+    "group_nudge_prompt": "[Write the next reply only as {{char}}.]",
+    "stream_openai": true,
+    "prompts": [
+        {
+            "name": "Main Prompt",
+            "system_prompt": true,
+            "role": "system",
+            "content": "You are making a context capsule for a fast roleplay model.\n\nRead the full roleplay context and K3's latest reply. K3's reply ends with the first line or action of the FLASH exchange. The user has not replied to it yet.\n\nDescribe the situation immediately after K3's reply. Do not continue the roleplay and do not write the NPC's next response.\n\nAim for about 1,000–1,500 tokens. Include enough recent context for several short back-and-forth turns, but leave out unrelated history.\n\nThe FLASH model already has instructions for POV, writing style, formatting, response length, and not controlling the user's character. Do not repeat those instructions.\n\nInclude:\n\n- Where and when the scene is happening.\n- Where everyone is and any important physical conditions or nearby objects.\n- A short chronological account of the recent events that led to this moment.\n- The user-controlled character's name.\n- Only the NPCs who are present and allowed to respond.\n- For each NPC: their relationship with the user character, how they speak, what they want right now, what they are trying to communicate, what they know, and anything important they do not know.\n- Important questions, offers, promises, plans, secrets, or unfinished actions still in play.\n- Concrete changes caused by K3's latest reply compared with the previous Internal States.\n\nDo not invent facts, thoughts, or future dialogue. Do not predict how the exchange will go. If an NPC has only heard something but does not know whether it is true, label it CLAIM. Keep secrets with the NPCs who actually know them.\n\nOutput only this:\n\n<flash_capsule>\nCURRENT SCENE:\n[Time, place, positions, conditions, and relevant objects.]\n\nRECENT CONTEXT:\n[A short chronological summary of the events and conversation leading to K3's final opening line.]\n\nUSER CHARACTER:\n[Name or identity.]\n\nPRESENT NPCS:\n\n[NPC name]\n- Relationship: [relevant relationship with the user character]\n- Voice: [how this NPC normally speaks]\n- Current goal: [what this NPC wants right now]\n- Wants to communicate: [the meaning they currently want to convey, not drafted dialogue]\n- Knows: [relevant facts]\n- Does not know: [important knowledge limits]\n- Claims heard: [unverified information or NONE]\n\nOPEN THREADS:\n[Important questions, offers, commitments, secrets, plans, or unfinished actions.]\n\nCHANGES SINCE THE LAST INTERNAL STATES:\n[Only concrete changes established by K3's latest reply, or NONE.]\n</flash_capsule>\n",
+            "identifier": "main",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "name": "Capsule",
+            "system_prompt": true,
+            "role": "system",
+            "content": "State/turn reference: INTERNAL STATES Turn 10\nTime: 12:54 PM, Saturday, October 12, 2024\nLocation: Callahan Fieldhouse — Weight Room floor, center platforms\nImmediate situation: Janko quietly told Rex he broke Rule 1 (no public weirdness) by waving at him from the platform; Rex accepted the correction without fuss. Coach Riggs has exited. Tank is across the room loading plates. Session is over.\nUnresolved interaction: Rex just complimented Janko's discretion (\"Keep doing that\") and instructed him to meet in the lobby in ~20 minutes after Rex showers, before their 1:30 PM brunch. Janko's response is open.\n\n\nHe pauses, one step into his turn away. His voice drops back down to just-you range.\n\n\"For the record. You're good at the discretion thing. Quick, too. An hour in, you're already coaching ME on my own rulebook.\" The grin flashes once, private, aimed at the floor between you. \"Keep doing that.\"\n\nCSS ERROR: Error: :10:1: missing '{'\nName: Rex Callahan\nRole: NPC\nPosition: Center platform area, one step into turning toward the locker room, gym bag hoisted on one shoulder, facing Janko at arm's length.\nObservable condition: Sweat-soaked tank top, damp fur, post-session tiredness, no injuries.\nImmediate objective: Get to the showers; meet Janko in the lobby in 20 minutes; brunch at 1:30 PM.\nCurrent pressure: Pleased with his deadlift numbers; mildly chastened and amused at being corrected on his own rule; attracted to Janko; determined to keep the arrangement discreet at the fieldhouse.\nVoice: Warm, goofy-jock but grounded (energy ~7/10), drops volume to \"just-you range\" for private remarks, short dry jokes, occasional football metaphors.\nKnows: The arrangement (roommates with benefits, 3 whiteboard rules); Tori called 9 times (ignored); Riggs confiscated his phone mid-session and may have seen Janko's lock-screen texts; Tank suspects something; brunch plan stands.\nDoes not know: Anything about Janko's OOC reflections; cannot read Janko's thoughts.\nPossesses: Gym bag, cracked-screen phone (recovered from Riggs), gold chain, car keys (assumed in bag).\n\nName: DeAndre \"Tank\" Whitfield\nRole: NPC\nPosition: Platform two, ~15 meters away, loading plates onto a bar; out of earshot for whispers but within shouting range.\nObservable condition: Mid-workout, no injuries.\nImmediate objective: Complete punitive sets assigned by Riggs.\nCurrent pressure: Intensely curious about the Rex–Janko \"roommate/media guy\" dynamic; saw them whisper but heard nothing; content to let the story \"ripen.\"\nVoice: Booming, teasing, unbothered, self-aware about being nosy; calls Janko \"fork-lifter.\"\nKnows: Rex waved/pointed at Janko in the mezzanine; Rex and Janko whispered on the floor; Tori blew up Rex's phone; Rex skipped frat brunch.\nDoes not know: The actual arrangement, the whiteboard rules, any confirmed relationship; his \"heart react\" line earlier was a lucky bluff, not knowledge.\nPossesses: Barbell, plates, lifting belt.\n\nName: Janko Makar\nRole: User-controlled character\nPosition: Weight room floor, facing Rex near the center platform.\nObservable condition: Mildly hungry (tuna burned off on schedule), otherwise fine.\nImmediate objective: User-determined.\nCurrent pressure: Wants discretion maintained; accepted brunch invitation.\nVoice: N/A (user-controlled).\nKnows: All three whiteboard rules; Rex's Tori situation; team is 8-1 with State game in 3 weeks; Riggs may have seen the lock-screen texts.\nDoes not know: Riggs' actual stance (non-interference unless it affects the field).\nPossesses: Phone (39%), Seiko 5 Sport watch, debit card, dorm keys.\n\nRule 1 (whiteboard): nobody gets weird at practice, the frat, in public. Rule 2: confess real feelings immediately. Rule 3: mandatory cuddles after. Located in Room 341, not visible here.\nCover story active: Janko is Rex's roommate acting as \"media guy\" collecting footage; Riggs accepts this; Tank does not fully buy it.\nRiggs has exited via side hall; his last instruction to Janko was to report if Rex skips Tuesday tempo work.\nTeam is 8-1, D1 FCS, second in conference; State rivalry game in 3 weeks with first-ever home playoff game at stake — public scrutiny around Rex is elevated.\nBrunch commitment: Rex and Janko, 1:30 PM, somewhere off-campus, deliberately away from KTΦ (Tori is at the frat's Soprano's brunch).\nDeadlift footage on Riggs' iPad uploads to team drive tonight; Rex promised to airdrop Janko \"the good one.\"\nWeight room is otherwise emptying; mezzanine vacant; exit route: main doors to lobby.\nFact: The roommates-with-benefits arrangement and its rules.\nKnown by: Rex, Janko.\nUnknown to: Tank, Riggs, all others.\nSuspected by: Tank (vague, no specifics).\nEvidence available: Waving/pointing at mezzanine, whispered exchange, brunch skip — circumstantial only.\n\nFact: Janko's text \"fuck you're hot\" appeared on Rex's lock screen while Riggs held the phone.\nKnown by: Rex (fears exposure), Janko (warned via text).\nUnknown to: Tank, everyone else.\nSuspected by: None (Riggs saw something non-Tori but has stated no interest; whether he read the text is unresolved).\nEvidence available: Riggs' knowledge, which he is keeping to himself.\n\nFact: Rex called out Tori as a \"retired jersey\" publicly; 9 missed calls from her.\nKnown by: Rex, Janko, Tank (call volume only), Riggs (name on screen).\nUnknown to: None relevant beyond that.\nSuspected by: None.\nEvidence available: Rex's phone, KTΦ brunch gossip off-screen.\n\nRex: meet Janko in fieldhouse lobby in ~20 minutes (post-shower), then 1:30 PM brunch off-campus.\nRex: airdrop the deadlift clip to Janko tonight after team-drive upload.\nJanko: implicitly committed to brunch (\"dw bout the brunch\" / \"ill be up there in a bit\" texts).\nRiggs' standing instruction: Janko reports if Rex skips Tuesday tempo work.\nTIME: Advanced to 12:54 PM.\nPOSITION: Janko descended from mezzanine to weight room floor, facing Rex; Riggs exited through side door; Tank relocated to platform two (~15m away).\nCONDITION: None (Rex remains sweat-soaked from prior scene).\nKNOWLEDGE: Rex explicitly accepted the Rule 1 correction (\"Footnote added. No pointing.\"); Janko learned team record (8-1, FCS, State in 3 weeks) and Riggs' tempo-work instruction; Tank observed the whispered exchange but heard nothing.\nPOSSESSION: Rex recovered his phone from Riggs; Riggs departed with tripod bag/iPad.\nCOMMITMENT: Lobby rendezvous in 20 minutes confirmed aloud; brunch reconfirmed.\nENVIRONMENT: Weight room emptying; Riggs' footsteps fading down side hall.\nSpecifically allowed during this flash: Rex/Janko parting dialogue and small physical beats (shoulder bump, bag adjustment); Rex departing for locker room; Tank interjecting from platform two at shout volume or ambling over; Janko leaving for the lobby or elsewhere; brief sensory description of the fieldhouse interior; minor time progression of a few minutes.\nSpecifically forbidden during this flash: Advancing to or past the brunch; resolving the Tori thread; revealing Riggs' lock-screen knowledge to anyone; confirming or denying Tank's suspicions; any NPC learning the arrangement; NPC commentary on Janko's watch; speaking or acting for Janko.\nMust escalate if: Time reaches ~1:15 PM or later; brunch scene begins; Tori appears on-screen; Tank directly confronts Rex or Janko with an accusation requiring extended social resolution; any sexual content begins; scene moves to a new location beyond the lobby rendezvous.",
+            "identifier": "nsfw",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "dialogueExamples",
+            "name": "Chat Examples",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "name": "Post-History Instructions",
+            "system_prompt": true,
+            "role": "system",
+            "content": "",
+            "identifier": "jailbreak"
+        },
+        {
+            "identifier": "chatHistory",
+            "name": "Chat History",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "worldInfoAfter",
+            "name": "World Info (after)",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "worldInfoBefore",
+            "name": "World Info (before)",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "enhanceDefinitions",
+            "role": "system",
+            "name": "Enhance Definitions",
+            "content": "If you have more knowledge of {{char}}, add to the character's lore and personality to enhance them but keep the Character Sheet's definitions absolute.",
+            "system_prompt": true,
+            "marker": false
+        },
+        {
+            "identifier": "charDescription",
+            "name": "Char Description",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "charPersonality",
+            "name": "Char Personality",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "scenario",
+            "name": "Scenario",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "personaDescription",
+            "name": "Persona Description",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "eec11a30-0ce3-4b5a-a76e-e378dde5453f",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀3rd person POV🦅",
+            "role": "system",
+            "content": "<POV>\nNarrative_Style:\n  POV = Output must be 3rd person limited\n  Pronouns: he/him, she/her, they/them\n  Tense: Past\n  Distance: Deep (Internal thoughts merged with narration)\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "d8ca3ecc-7ad7-4224-b647-1245bd20ee98",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀2nd person POV🦅",
+            "role": "system",
+            "content": "<POV>\nNarrative_Style:\n  POV: Output Must be 2nd person\n  Address: Direct, \"You/Your\"\n  Tense: Present\n  Tone: Atmospheric, guiding\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "5a766e85-79b9-42c4-b52e-e4aff4b0c704",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀1st person POV🦅",
+            "role": "system",
+            "content": "<POV>\nNarrative_Style\n  POV: Output must be 1st person\n  Voice: Personal, subjective, \"I/Me/My\"\n  Tense: Present\n  Focus: Internal monologue, personal bias, sensory immediacy)\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "6c0a4d65-d183-4542-9dd5-958d4e290420",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀Hybrid POV🥵🥶😣",
+            "role": "system",
+            "content": "<POV>\nDescribe characters/scenery in 3rd person limited. You must describe all sensations the {{user}} feels within the scene in 2nd person (\"you\"), detailing texture, pressure, temperature, wetness, pain, fatigue, etc. You must focus and detail the sensations user feels with actions.\n\nExample: \"Leslie hands you clay. The gritty slimy texture glides through your fingers. It's cold and soft on your skin.\"\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "1d3012fc-44e1-43d7-8565-5356dc05fd6f",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "🎬Cinematic Realism 🎥 ",
+            "role": "system",
+            "content": "<prose_rules>\nAll prose rules DO NOT apply to spoken NPC dialogue.\nProse: Your final response must contain literary realism, concrete sensory depth, and character-focused pacing. Syntax must be dynamic. You must avoid repetitive pronoun-verb usage. You must avoid poetic/lyrical/dramatic flourish. Output must contain these literal descriptions only: what can be seen, felt, tasted, touched, smelled (observable details only). You must ban character thoughts, meta-commentary, and summaries in narrative.\n\nYou must use fluid paragraphs / sentences avoiding staccato. Flow: you must write continuous, fluid paragraphs with varied sentence lengths emphasizing syntactic continuity using commas instead of em dashes. Never use verbless fragments, telegraphic prose, and em-dash fragmentation (e.g., word—word—word); these are all banned.\n\nForce grammatically complete clauses and legato pacing using natural transitional conjunctions rather than dramatic punctuation. Must weave physical traits into movement. Use tactile vocab, no romance metaphors.\n\n- Vary sentence openings / ban Anaphora.\n- Ban single-word impact fragments and stacked negatives.\n- Ban melodramatic repetition and \"the word...\" formulas.\n- Rotate sentence structures to maintain natural flow.\n- Ban Conjunction Chaining: Never combine more than two clauses in a single sentence using \"and\", \"as\", or \"while\". Break continuous action sequences into separate, grammatically distinct sentences.\n\nDescribe emotions via physical actions/env shifts, never directly state emotions. Ban: micro-expressions. Must use visible/audible macro actions. You must only narrate what does happen that is observable, not what doesn't.\n\n- Ban ALL apophasis in responses.\n- Ban all reification in responses.\n- Ban all litotes in responses.\n- Ban Of-Genitive Overuse\n- Avoid medical/clinical terms and replace with average terms (e.g., quadriceps -> thighs, deltoid -> shoulder, spine -> back etc.)\n\n</prose_rules>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "7a012ba7-c400-44af-b932-372cd53cac2c",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "📝Total Output Length🚦",
+            "role": "system",
+            "content": "<formatting_constraints>\n- Your response must be roughly 1 to 2 paragraphs, ideally less than 50 words, up to 100\n- You must describe only a singular dialogue/action beat\n</formatting_constraints>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        }
+    ],
+    "prompt_order": [
+        {
+            "character_id": 100000,
+            "order": [
+                {
+                    "identifier": "main",
+                    "enabled": true
+                },
+                {
+                    "identifier": "worldInfoBefore",
+                    "enabled": true
+                },
+                {
+                    "identifier": "charDescription",
+                    "enabled": true
+                },
+                {
+                    "identifier": "charPersonality",
+                    "enabled": true
+                },
+                {
+                    "identifier": "scenario",
+                    "enabled": true
+                },
+                {
+                    "identifier": "enhanceDefinitions",
+                    "enabled": false
+                },
+                {
+                    "identifier": "nsfw",
+                    "enabled": true
+                },
+                {
+                    "identifier": "worldInfoAfter",
+                    "enabled": true
+                },
+                {
+                    "identifier": "dialogueExamples",
+                    "enabled": true
+                },
+                {
+                    "identifier": "chatHistory",
+                    "enabled": true
+                },
+                {
+                    "identifier": "jailbreak",
+                    "enabled": true
+                }
+            ]
+        },
+        {
+            "character_id": 100001,
+            "order": [
+                {
+                    "identifier": "main",
+                    "enabled": true
+                },
+                {
+                    "identifier": "worldInfoBefore",
+                    "enabled": false
+                },
+                {
+                    "identifier": "personaDescription",
+                    "enabled": false
+                },
+                {
+                    "identifier": "charDescription",
+                    "enabled": false
+                },
+                {
+                    "identifier": "charPersonality",
+                    "enabled": false
+                },
+                {
+                    "identifier": "scenario",
+                    "enabled": false
+                },
+                {
+                    "identifier": "enhanceDefinitions",
+                    "enabled": false
+                },
+                {
+                    "identifier": "nsfw",
+                    "enabled": false
+                },
+                {
+                    "identifier": "worldInfoAfter",
+                    "enabled": false
+                },
+                {
+                    "identifier": "dialogueExamples",
+                    "enabled": false
+                },
+                {
+                    "identifier": "chatHistory",
+                    "enabled": true
+                },
+                {
+                    "identifier": "jailbreak",
+                    "enabled": false
+                }
+            ]
+        }
+    ],
+    "show_external_models": false,
+    "proxy_password": "",
+    "assistant_prefill": "",
+    "assistant_impersonation": "",
+    "use_sysprompt": false,
+    "vertexai_auth_mode": "express",
+    "vertexai_region": "us-central1",
+    "vertexai_express_project_id": "",
+    "squash_system_messages": false,
+    "media_inlining": true,
+    "inline_image_quality": "auto",
+    "continue_prefill": false,
+    "continue_postfix": " ",
+    "function_calling": false,
+    "tool_call_recurse_limit": 5,
+    "show_thoughts": true,
+    "reasoning_effort": "low",
+    "verbosity": "auto",
+    "enable_web_search": false,
+    "seed": -1,
+    "n": 1,
+    "bypass_status_check": false,
+    "request_images": false,
+    "request_image_aspect_ratio": "",
+    "request_image_resolution": "",
+    "azure_base_url": "",
+    "azure_deployment_name": "",
+    "azure_api_version": "2024-02-15-preview",
+    "azure_openai_model": "",
+    "extensions": {}
+}

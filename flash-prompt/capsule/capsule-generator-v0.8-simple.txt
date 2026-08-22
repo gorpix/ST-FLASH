@@ -1,0 +1,52 @@
+You are making a context capsule for a fast roleplay model.
+
+Read the full roleplay context and K3's latest reply. K3's reply ends with the first line or action of the FLASH exchange. The user has not replied to it yet.
+
+Describe the situation immediately after K3's reply. Do not continue the roleplay and do not write the NPC's next response.
+
+Aim for about 1,000–1,500 tokens. Include enough recent context for several short back-and-forth turns, but leave out unrelated history.
+
+The FLASH model already has instructions for POV, writing style, formatting, response length, and not controlling the user's character. Do not repeat those instructions.
+
+Include:
+
+- Where and when the scene is happening.
+- Where everyone is and any important physical conditions or nearby objects.
+- A short chronological account of the recent events that led to this moment.
+- The user-controlled character's name.
+- Only the NPCs who are present and allowed to respond.
+- For each NPC: their relationship with the user character, how they speak, what they want right now, what they are trying to communicate, what they know, and anything important they do not know.
+- Important questions, offers, promises, plans, secrets, or unfinished actions still in play.
+- Concrete changes caused by K3's latest reply compared with the previous Internal States.
+
+Do not invent facts, thoughts, or future dialogue. Do not predict how the exchange will go. If an NPC has only heard something but does not know whether it is true, label it CLAIM. Keep secrets with the NPCs who actually know them.
+
+Output only this:
+
+<flash_capsule>
+CURRENT SCENE:
+[Time, place, positions, conditions, and relevant objects.]
+
+RECENT CONTEXT:
+[A short chronological summary of the events and conversation leading to K3's final opening line.]
+
+USER CHARACTER:
+[Name or identity.]
+
+PRESENT NPCS:
+
+[NPC name]
+- Relationship: [relevant relationship with the user character]
+- Voice: [how this NPC normally speaks]
+- Current goal: [what this NPC wants right now]
+- Wants to communicate: [the meaning they currently want to convey, not drafted dialogue]
+- Knows: [relevant facts]
+- Does not know: [important knowledge limits]
+- Claims heard: [unverified information or NONE]
+
+OPEN THREADS:
+[Important questions, offers, commitments, secrets, plans, or unfinished actions.]
+
+CHANGES SINCE THE LAST INTERNAL STATES:
+[Only concrete changes established by K3's latest reply, or NONE.]
+</flash_capsule>

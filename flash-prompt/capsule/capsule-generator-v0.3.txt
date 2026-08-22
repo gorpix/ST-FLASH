@@ -1,0 +1,61 @@
+FLASH CAPSULE GENERATOR
+
+When a FLASH handoff is requested, append exactly one <flash_capsule> after the visible anchor response. Do not generate a capsule when FLASH is not requested. The capsule is private handoff data, not roleplay prose.
+
+Create a compact factual snapshot that lets the FLASH model continue from the exact cutoff for the next few microturns.
+
+Keep the generated capsule as short as practical and at or below approximately 1,500 tokens. Do not fill the available budget unless the scene genuinely requires it.
+
+The FLASH preset already supplies POV, tense, narration and dialogue rules, formatting, response length, and general authority rules. Do not repeat, summarize, or override them in the capsule.
+
+Use only established context. Do not predict the continuation, script dialogue, invent character thoughts, or assume what the user will say, feel, choose, or do.
+
+Include only:
+
+- The latest established speech or action and the immediate unresolved beat.
+- The user-controlled character's identity and latest explicit input.
+- Current time, location, positions, physical conditions, and relevant nearby objects.
+- NPCs authorized to act during this FLASH segment.
+- Each authorized NPC's essential relationship context, voice cues, immediate established intent, and relevant knowledge boundaries.
+- Pending proposals, accepted commitments, and unresolved immediate actions.
+- Limits unique to the current scene.
+
+Keep secrets under the NPC who knows them. Mark relevant unverified information as CLAIM. Omit inactive characters, full character sheets, broad lore, and anything unlikely to matter during the next few microturns.
+
+Use this structure. Use NONE where needed. Add one <npc> block per authorized NPC.
+
+<flash_capsule>
+<cutoff>
+USER_CHARACTER: [name or identity]
+LATEST_INPUT: [latest explicit speech or action; no inference]
+OPEN_BEAT: [immediate unresolved beat]
+</cutoff>
+
+<scene>
+TIME_LOCATION: [current time and exact local location]
+PHYSICAL_STATE: [positions, proximity, orientation, and relevant conditions]
+RELEVANT_OBJECTS: [nearby or held objects that matter immediately, or NONE]
+</scene>
+
+<authorized_npcs>
+<npc name="[name]">
+ROLE_RELATIONSHIP: [minimal context needed for this exchange]
+VOICE: [brief distinguishing cues]
+IMMEDIATE_INTENT: [established intent or NONE]
+POSITION_CONDITION: [current position and physical condition]
+KNOWS: [relevant facts this NPC knows or NONE]
+DOES_NOT_KNOW: [important knowledge boundary or NONE]
+CLAIMS_HEARD: [relevant unverified information or NONE]
+</npc>
+</authorized_npcs>
+
+<pending>
+UNRESOLVED_ACTION: [immediate unfinished action or NONE]
+PROPOSALS: [unaccepted offers, requests, threats, or plans, or NONE]
+COMMITMENTS: [accepted or explicitly reaffirmed commitments, or NONE]
+</pending>
+
+<scene_specific_limits>
+[Only restrictions unique to this scene, or NONE]
+</scene_specific_limits>
+</flash_capsule>

@@ -1,0 +1,26 @@
+# Dependencies and build output
+/node_modules/
+/dist/
+/coverage/
+/outputs/
+/work/
+
+# Private SillyTavern/runtime data
+/data/
+/chats/
+/characters/
+/secrets.json
+/config.yaml
+/.env
+/.env.*
+*.log
+
+# Local editor and OS files
+/.vscode/
+/.idea/
+.DS_Store
+Thumbs.db
+
+# Exported bundles
+*.zip
+

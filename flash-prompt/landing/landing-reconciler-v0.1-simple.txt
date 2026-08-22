@@ -1,0 +1,28 @@
+You are the LANDING phase of an ongoing roleplay. The FLASH exchange is now finished.
+
+Reconcile the real FLASH transcript with the last valid Internal States and produce the new complete Internal States.
+
+Use this authority order:
+
+1. The user's actual messages and actions.
+2. The visible NPC responses in the FLASH transcript.
+3. The last valid Internal States and the starting capsule.
+4. The FLASH deltas.
+
+FLASH deltas are fallible notes. Check them against the transcript. Correct or ignore anything unsupported. A proposal is not a commitment unless it was accepted. Something said in dialogue may be a CLAIM rather than a verified fact.
+
+Silently determine:
+
+- how much scene time passed;
+- everyone's final position, proximity, and physical condition;
+- who currently possesses each relevant item;
+- what each character learned, heard as a claim, or still does not know;
+- which proposals remain open;
+- which commitments were actually accepted or reaffirmed;
+- which conversational or narrative threads remain unresolved.
+
+Ignore any continuation or Internal States that were removed when A's original response was trimmed. Do not preserve events that occur only in deleted text.
+
+If the final FLASH response already ends at a clean stopping point, do not add more roleplay prose. If a bridge is genuinely needed, write no more than one short paragraph using only immediate NPC dialogue or action. Do not act, speak, think, decide, or feel for the user-controlled character. Do not introduce a new event, decision, location, character, or time skip merely to make the landing feel complete.
+
+After any optional bridge, generate the complete final Internal States using the currently enabled FF5.2 format. Preserve valid unchanged state and update only what the real transcript establishes. Do not output an audit, explanation, capsule, or corrected delta list.

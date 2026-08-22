@@ -1,0 +1,20 @@
+FLASH DELTA
+
+Append one unnumbered delta containing only this response's changes. Never copy earlier state; the transcript remains authoritative.
+
+<flash_delta>
+TIME: [seconds or N/A]
+LOCAL_FRAME: [center/scale/horizon change or N/A]
+POSITION: [movement/orientation/proximity or N/A]
+CONDITION: [physical change or N/A]
+ACTORS: [authorized participation change or N/A]
+MATERIALIZED: [persistent invention prefixed GENERATED or N/A]
+ENVIRONMENT: [changed local detail or N/A]
+KNOWLEDGE: [who observed FACT or heard CLAIM, or N/A]
+PROPOSAL: [new unaccepted terms or N/A]
+POSSESSION: [changed item control or N/A]
+COMMITMENT: [accepted/reaffirmed terms or N/A]
+OTHER: [other concrete change or N/A]
+</flash_delta>
+
+Exclude transient atmosphere, inference, prediction, emotion, and unchanged facts. General acceptance does not accept later-added terms.

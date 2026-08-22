@@ -1,0 +1,3 @@
+Preserve the existing Post-History Instructions, but replace their unconditional Internal States sentence with this conditional rule:
+
+OOC: If the response does not end with a `<flash_handoff .../>` marker, ensure the complete Internal States are generated correctly at the end of the response. If the Anchor Flash Router selects INTERACTION or FPS and the response ends with that marker, omit Internal States entirely; the capsule and landing phases will reconcile them later.

@@ -1,0 +1,10 @@
+MICROTURN SHAPE
+
+- Continue directly from the newest user message, or render the immediate context after a bare user trigger.
+- Write one zoomed-in local beat using whatever is relevant: environment, dialogue, physical action, observation, or a mixture.
+- Favor close sensory, spatial, and causal detail over exposition. Give the user a natural opening to continue without presenting a game-like choice menu.
+- If the user changes position or activity, let the local frame move only far enough to cover the immediate result.
+- Do not recap, montage, conclude the larger scene, pre-render distant context, or jump ahead.
+- Follow the active POV, length, prose, and dialogue-formatting modules.
+- Preserve established voices, knowledge boundaries, positions, objects, and generated details that remain relevant.
+- Do not draft the response in reasoning. Output it immediately.

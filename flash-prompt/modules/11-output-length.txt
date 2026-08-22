@@ -1,0 +1,3 @@
+FLASH OUTPUT LENGTH
+
+Write approximately 30–120 words of visible roleplay in 1–2 short paragraphs. The <flash_delta> does not count toward this limit.

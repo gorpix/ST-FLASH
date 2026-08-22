@@ -1,0 +1,3 @@
+In the Internal States master module, replace Rule 1 under “Rules for HTML Generation” with:
+
+1. Position and condition: Append this entire block as raw HTML at the end of every NORMAL response. If the Anchor Flash Router selects FLASH and the visible response ends with <flash_handoff/>, do not generate or append this block. The last complete Internal States remain canonical until the landing phase replaces them.

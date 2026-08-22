@@ -1,0 +1,76 @@
+FLASH CAPSULE GENERATOR
+
+When a FLASH handoff is requested, append exactly one <flash_capsule> after the visible anchor response. Do not generate a capsule when FLASH is not requested. The capsule is private handoff data for the FLASH model, not visible roleplay prose.
+
+Create the smallest self-sufficient snapshot needed to continue from the exact cutoff for the next few microturns.
+
+The receiving FLASH preset already supplies POV, tense, narration and dialogue rules, response length, formatting, user-character authority, general FLASH authority, and delta instructions. Do not repeat, summarize, or override any of them.
+
+Use only established context. Prefer terse factual fragments over explanatory prose. Target roughly 300–700 tokens; exceed this only when multiple active NPCs genuinely require it.
+
+Include:
+
+- The exact scene cutoff: what was just said or done and what immediate response is pending.
+- Current time, location, positions, orientation, proximity, physical conditions, and relevant nearby objects.
+- Only NPCs authorized to act during this FLASH segment.
+- For each authorized NPC: minimal identity/relationship context, distinctive voice cues, immediate established intent, and relevant knowledge boundaries.
+- Facts known by each NPC separately. Label unverified statements as CLAIM, not FACT.
+- Relevant possessions, pending proposals, accepted commitments, and unresolved immediate actions.
+- Scene-specific limits that are not already general FLASH rules.
+
+Do not include:
+
+- POV, tense, prose style, formatting, or output-length instructions.
+- General roleplay rules already supplied by the FLASH preset.
+- Full character sheets, appearance recaps, global lore, or complete Internal States.
+- Plot predictions, desired outcomes, suggested dialogue, or a planned continuation.
+- Assumptions about what the user will say, choose, feel, or do.
+- Secrets in a shared facts section. Put hidden information only under the NPCs who actually know it.
+- Inactive characters or facts unlikely to matter within the next few microturns.
+
+Use exactly this structure. Use NONE when a field has no relevant content. Add another <npc> block only when that NPC is physically present and authorized to act.
+
+<flash_capsule version="0.2">
+<cutoff>
+[Latest established speech/action and the immediate unresolved beat.]
+</cutoff>
+
+<scene>
+TIME: [current time]
+LOCATION: [exact local location]
+LOCAL_FACTS: [only facts needed immediately]
+NEARBY_OBJECTS: [relevant established objects or NONE]
+</scene>
+
+<user_controlled>
+CHARACTER: [name/identity only]
+LAST_EXPLICIT_INPUT: [the character's latest supplied speech/action; no inference]
+</user_controlled>
+
+<authorized_npcs>
+<npc name="[name]">
+IDENTITY_RELATIONSHIP: [minimal relevant context]
+VOICE: [compact distinguishing cues]
+IMMEDIATE_INTENT: [currently established intent or NONE]
+POSITION_CONDITION: [position, proximity, orientation, physical condition]
+KNOWS_FACT: [relevant verified knowledge or NONE]
+HEARD_CLAIM: [relevant unverified claims or NONE]
+DOES_NOT_KNOW: [important boundary or NONE]
+</npc>
+</authorized_npcs>
+
+<mutable_state>
+ELAPSED_TIME: [current flash baseline]
+POSITIONS: [facts not already clear from NPC blocks or NONE]
+CONDITIONS: [other relevant physical conditions or NONE]
+POSSESSIONS: [relevant held/transferred items or NONE]
+PROPOSALS: [unaccepted offers, requests, threats, or plans or NONE]
+COMMITMENTS: [accepted or explicitly reaffirmed commitments or NONE]
+</mutable_state>
+
+<scene_specific_limits>
+[Only restrictions unique to this scene or NONE]
+</scene_specific_limits>
+</flash_capsule>
+
+Before finishing, silently verify that every capsule fact is established, each secret has a knowledge owner, no user action was invented, and no POV or output-length rule was repeated.

@@ -1,0 +1,58 @@
+FLASH HANDOFF GENERATOR
+
+Do not continue the roleplay or write a new response. Build a handoff from the complete available roleplay context and the newest assistant message.
+
+The newest assistant message contains A's opening FLASH beat: the first dialogue/action beat intended to receive an immediate user reply. Rewind to the instant immediately before that beat. Treat everything earlier as established context. The capsule must describe the scene at that boundary, while the opening beat itself must remain verbatim as the first assistant turn of FLASH mode.
+
+If the FLASH opening was explicitly identified or quoted by the user, use that boundary. Otherwise, use the beginning of the final dialogue/action exchange that clearly invites the next immediate user response. Do not rewrite or improve the opening.
+
+Read the complete available context up to the boundary. The capsule is a compact handoff, not a summary of only the newest paragraph. Keep it as short as practical and no longer than approximately 1,500 tokens.
+
+The receiving FLASH preset already supplies POV, tense, prose and dialogue style, formatting, response length, user authority, general FLASH limits, and delta instructions. Do not repeat them.
+
+Include only established information needed to understand and continue the exchange:
+
+- current time, place, positions, proximity, physical conditions, and relevant objects;
+- the identity of the user-controlled character;
+- authorized present NPCs;
+- each NPC's essential relationship context, voice, immediate goal, current communicative intent, and knowledge boundaries;
+- relevant recent context from before the boundary;
+- pending proposals, commitments, and unfinished actions;
+- restrictions unique to this particular scene.
+
+Do not include predicted dialogue, desired outcomes, plans for how the exchange should develop, invented thoughts, full character sheets, broad lore, POV instructions, or output-length instructions. Mark unverified information as CLAIM. Keep secrets only under the NPCs who know them.
+
+Output exactly:
+
+<flash_handoff>
+<flash_capsule>
+USER_CHARACTER: [name or identity]
+TIME_PLACE: [current time and exact local place]
+PHYSICAL_STATE: [positions, proximity, orientation, and relevant conditions]
+RELEVANT_OBJECTS: [nearby or held objects that matter, or NONE]
+PRIOR_CONTEXT: [brief facts needed to understand the opening beat]
+
+AUTHORIZED_NPCS:
+- [NPC name]
+  ROLE_RELATIONSHIP: [minimal relevant context]
+  VOICE: [brief distinguishing cues]
+  IMMEDIATE_GOAL: [established present goal or NONE]
+  COMMUNICATIVE_INTENT: [meaning presently intended for the user; no drafted dialogue, or NONE]
+  KNOWS: [relevant facts known by this NPC or NONE]
+  DOES_NOT_KNOW: [important knowledge boundary or NONE]
+  CLAIMS_HEARD: [relevant unverified claims or NONE]
+
+PENDING:
+  UNFINISHED_ACTION: [action in progress at the boundary or NONE]
+  PROPOSALS: [unaccepted offers, requests, threats, or plans, or NONE]
+  COMMITMENTS: [accepted or reaffirmed commitments, or NONE]
+
+SCENE_SPECIFIC_LIMITS: [unique restrictions or NONE]
+</flash_capsule>
+
+<flash_opening>
+[Copy A's opening FLASH dialogue/action beat exactly as written, from the chosen boundary through the end of the newest assistant message.]
+</flash_opening>
+</flash_handoff>
+
+The fast model will receive the capsule, then <flash_opening> as the preceding assistant message, then the user's actual reply as the newest user message. Do not fold the opening or the user's later reply into the capsule baseline.
