@@ -1,5 +1,7 @@
-# FLASH-ST / Microturns
+# ST-FLASH / Microturns
 ## Pre-implementation plan
+
+> Historical planning gate: implementation began after the manually validated five-preset workflow was frozen. The current implementation status and runtime roles are documented in the repository README. References below to three roles, a Normal resolver, or implementation not having started describe earlier design stages.
 
 This is the gate before writing a SillyTavern extension. The objective is to prove the prompt protocol, state contract, model roles, and user experience manually first. Coding begins only after the required decisions and tests below are complete.
 

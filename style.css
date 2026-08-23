@@ -1,0 +1,295 @@
+/* ST-FLASH uses namespaced selectors so the host chat theme remains untouched. */
+
+#st_flash_settings {
+    --st-flash-accent: var(--SmartThemeQuoteColor, #66a3ff);
+    --st-flash-accent-strong: var(--SmartThemeEmColor, #8cc0ff);
+    --st-flash-surface: var(--SmartThemeBlurTintColor, rgba(30, 34, 44, 0.9));
+    --st-flash-surface-muted: var(--SmartThemeBotMesColor, rgba(127, 127, 127, 0.12));
+    --st-flash-text: var(--SmartThemeBodyColor, inherit);
+    --st-flash-muted: var(--SmartThemeQuoteColor, #9ca7b7);
+    --st-flash-border: var(--SmartThemeBorderColor, rgba(140, 160, 190, 0.38));
+    color: var(--st-flash-text);
+}
+
+#st_flash_settings .st_flash_settings_content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.35rem 0.2rem 0.6rem;
+}
+
+#st_flash_settings .st_flash_settings_intro,
+#st_flash_settings .st_flash_hint {
+    color: var(--st-flash-muted);
+    font-size: 0.85rem;
+    line-height: 1.35;
+    margin: 0;
+}
+
+#st_flash_settings .st_flash_fieldset {
+    border: 1px solid var(--st-flash-border);
+    border-radius: 0.45rem;
+    margin: 0;
+    min-width: 0;
+    padding: 0.7rem;
+}
+
+#st_flash_settings .st_flash_fieldset legend {
+    color: var(--st-flash-accent-strong);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0 0.35rem;
+}
+
+#st_flash_settings .st_flash_profile_grid,
+#st_flash_settings .st_flash_preset_grid {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+    margin-top: 0.55rem;
+}
+
+#st_flash_settings .st_flash_field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.28rem;
+    min-width: 0;
+}
+
+#st_flash_settings .st_flash_field > span {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+#st_flash_settings .st_flash_field .text_pole {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-height: 2.25rem;
+    width: 100%;
+}
+
+#st_flash_settings .st_flash_setting_row {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    min-height: 2.25rem;
+}
+
+#st_flash_settings .st_flash_setting_row input[type="checkbox"] {
+    flex: 0 0 auto;
+}
+
+#st_flash_settings .st_flash_setting_grid {
+    display: grid;
+    grid-template-columns: minmax(12rem, 20rem);
+}
+
+/* ST-FLASH runtime controls are inserted beside the host composer by src/ui.js. */
+.st_flash_runtime,
+#st_flash_decision_bar,
+#st_flash_status,
+#st_flash_recovery {
+    --st-flash-accent: var(--SmartThemeQuoteColor, #66a3ff);
+    --st-flash-accent-strong: var(--SmartThemeEmColor, #8cc0ff);
+    --st-flash-surface: var(--SmartThemeBlurTintColor, rgba(30, 34, 44, 0.95));
+    --st-flash-surface-muted: var(--SmartThemeBotMesColor, rgba(127, 127, 127, 0.12));
+    --st-flash-text: var(--SmartThemeBodyColor, inherit);
+    --st-flash-muted: var(--SmartThemeQuoteColor, #9ca7b7);
+    --st-flash-border: var(--SmartThemeBorderColor, rgba(140, 160, 190, 0.38));
+    box-sizing: border-box;
+    color: var(--st-flash-text);
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+#st_flash_decision_bar,
+#st_flash_status,
+#st_flash_recovery {
+    align-items: center;
+    background: var(--st-flash-surface);
+    border: 1px solid var(--st-flash-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 0.5rem 0;
+    padding: 0.6rem;
+    width: 100%;
+}
+
+#st_flash_decision_bar[hidden],
+#st_flash_status[hidden],
+#st_flash_recovery[hidden] {
+    display: none !important;
+}
+
+.st_flash_bar_label,
+.st_flash_status_label,
+.st_flash_recovery_label {
+    flex: 1 1 12rem;
+    min-width: min(12rem, 100%);
+}
+
+.st_flash_bar_label strong,
+.st_flash_status_label strong,
+.st_flash_recovery_label strong {
+    color: var(--st-flash-accent-strong);
+    display: block;
+    font-weight: 600;
+}
+
+.st_flash_bar_hint,
+.st_flash_status_detail,
+.st_flash_recovery_detail {
+    color: var(--st-flash-muted);
+    display: block;
+    font-size: 0.8rem;
+}
+
+.st_flash_action_group {
+    align-items: center;
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    justify-content: flex-end;
+}
+
+.st_flash_button {
+    appearance: none;
+    background: var(--st-flash-surface-muted);
+    border: 1px solid var(--st-flash-border);
+    border-radius: 0.35rem;
+    color: var(--st-flash-text);
+    cursor: pointer;
+    font: inherit;
+    line-height: 1.2;
+    min-height: 2.4rem;
+    padding: 0.55rem 0.8rem;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+.st_flash_button:hover {
+    border-color: var(--st-flash-accent);
+}
+
+.st_flash_button:focus-visible {
+    outline: 2px solid var(--st-flash-accent-strong);
+    outline-offset: 2px;
+}
+
+.st_flash_button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+#send_but.st_flash_host_send_locked {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.st_flash_session_active .swipe_left,
+.st_flash_session_active .swipe_right {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.st_flash_button_primary {
+    background: rgba(102, 163, 255, 0.22);
+    border-color: var(--st-flash-accent);
+}
+
+@supports (background: color-mix(in srgb, white, black)) {
+    .st_flash_button_primary {
+        background: color-mix(in srgb, var(--st-flash-accent) 22%, transparent);
+        border-color: var(--st-flash-accent);
+    }
+}
+
+.st_flash_button_danger {
+    border-color: rgba(227, 107, 107, 0.65);
+}
+
+@supports (border-color: color-mix(in srgb, white, black)) {
+    .st_flash_button_danger {
+        border-color: color-mix(in srgb, #e36b6b 65%, var(--st-flash-border));
+    }
+}
+
+.st_flash_turn_count {
+    align-items: center;
+    background: var(--st-flash-surface-muted);
+    border: 1px solid var(--st-flash-border);
+    border-radius: 999px;
+    display: inline-flex;
+    font-variant-numeric: tabular-nums;
+    gap: 0.25rem;
+    min-height: 2rem;
+    padding: 0.25rem 0.7rem;
+    white-space: nowrap;
+}
+
+.st_flash_turn_count strong {
+    color: var(--st-flash-accent-strong);
+}
+
+.st_flash_error {
+    background: color-mix(in srgb, #cc5b5b 14%, transparent);
+    border-left: 3px solid #d46a6a;
+    border-radius: 0.2rem;
+    flex: 1 1 100%;
+    margin: 0;
+    overflow-wrap: anywhere;
+    padding: 0.5rem 0.65rem;
+}
+
+.st_flash_error_code {
+    color: var(--st-flash-muted);
+    display: block;
+    font-family: var(--monoFontFamily, ui-monospace, monospace);
+    font-size: 0.75rem;
+    margin-top: 0.15rem;
+}
+
+@media (max-width: 640px) {
+    #st_flash_settings .st_flash_settings_content {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #st_flash_settings .st_flash_setting_grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #st_flash_decision_bar,
+    #st_flash_status,
+    #st_flash_recovery {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .st_flash_bar_label,
+    .st_flash_status_label,
+    .st_flash_recovery_label {
+        flex-basis: auto;
+        min-width: 0;
+    }
+
+    .st_flash_action_group {
+        justify-content: stretch;
+        width: 100%;
+    }
+
+    .st_flash_action_group .st_flash_button {
+        flex: 1 1 9rem;
+        white-space: normal;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .st_flash_button {
+        transition: none;
+    }
+}

@@ -1,0 +1,87 @@
+<div id="st_flash_settings" class="st_flash_settings" data-st-flash="settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b data-i18n="ST-FLASH">ST-FLASH</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down" aria-hidden="true"></div>
+        </div>
+        <div class="inline-drawer-content st_flash_settings_content">
+            <p class="st_flash_settings_intro">
+                <span data-i18n="ST-FLASH routes a short local exchange through a bounded Flash session.">
+                    ST-FLASH routes a short local exchange through a bounded Flash session.
+                </span>
+            </p>
+
+            <label class="checkbox_label st_flash_setting_row" for="st_flash_enabled">
+                <input id="st_flash_enabled" name="st_flash_enabled" type="checkbox" class="checkbox" checked>
+                <span data-i18n="Enable ST-FLASH">Enable ST-FLASH</span>
+            </label>
+
+            <fieldset class="st_flash_fieldset">
+                <legend data-i18n="Profiles">Profiles</legend>
+                <p class="st_flash_hint" data-i18n="Choose Connection Manager profiles for each ST-FLASH role. The list is loaded from SillyTavern.">
+                    Choose Connection Manager profiles for each ST-FLASH role. The list is loaded from SillyTavern.
+                </p>
+                <div class="st_flash_profile_grid">
+                    <label class="st_flash_field" for="st_flash_profile_a">
+                        <span data-i18n="Profile A — Anchor">Profile A — Anchor</span>
+                        <select id="st_flash_profile_a" name="st_flash_profile_a" class="text_pole" data-st-flash-profile-role="anchor">
+                            <option value="" selected>Select a connection profile…</option>
+                        </select>
+                    </label>
+                    <label class="st_flash_field" for="st_flash_profile_b">
+                        <span data-i18n="Profile B — Capsule and Flash">Profile B — Capsule + Flash</span>
+                        <select id="st_flash_profile_b" name="st_flash_profile_b" class="text_pole" data-st-flash-profile-role="flash">
+                            <option value="" selected>Select a connection profile…</option>
+                        </select>
+                    </label>
+                    <label class="st_flash_field" for="st_flash_profile_c">
+                        <span data-i18n="Profile C — Landing and Continuation">Profile C — Landing + Continuation</span>
+                        <select id="st_flash_profile_c" name="st_flash_profile_c" class="text_pole" data-st-flash-profile-role="landing">
+                            <option value="" selected>Select a connection profile…</option>
+                        </select>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="st_flash_fieldset">
+                <legend data-i18n="Preset names">Preset names</legend>
+                <p class="st_flash_hint" data-i18n="Names must match presets available in SillyTavern.">
+                    Names must match presets available in SillyTavern.
+                </p>
+                <div class="st_flash_preset_grid">
+                    <label class="st_flash_field" for="st_flash_preset_anchor">
+                        <span data-i18n="Anchor">Anchor</span>
+                        <input id="st_flash_preset_anchor" name="st_flash_preset_anchor" class="text_pole" type="text" value="FF5.2 Anchor" autocomplete="off">
+                    </label>
+                    <label class="st_flash_field" for="st_flash_preset_capsule">
+                        <span data-i18n="Capsule">Capsule</span>
+                        <input id="st_flash_preset_capsule" name="st_flash_preset_capsule" class="text_pole" type="text" value="Capsule" autocomplete="off">
+                    </label>
+                    <label class="st_flash_field" for="st_flash_preset_flash">
+                        <span data-i18n="Flash">Flash</span>
+                        <input id="st_flash_preset_flash" name="st_flash_preset_flash" class="text_pole" type="text" value="FF5.2 Flash" autocomplete="off">
+                    </label>
+                    <label class="st_flash_field" for="st_flash_preset_landing">
+                        <span data-i18n="Landing">Landing</span>
+                        <input id="st_flash_preset_landing" name="st_flash_preset_landing" class="text_pole" type="text" value="FF5.2 Landing" autocomplete="off">
+                    </label>
+                    <label class="st_flash_field" for="st_flash_preset_continuation">
+                        <span data-i18n="Continuation">Continuation</span>
+                        <input id="st_flash_preset_continuation" name="st_flash_preset_continuation" class="text_pole" type="text" value="FF5.2 Continuation" autocomplete="off">
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="st_flash_setting_grid">
+                <label class="st_flash_field" for="st_flash_landing_baseline_count">
+                    <span data-i18n="Landing baseline count">Landing baseline count</span>
+                    <input id="st_flash_landing_baseline_count" name="st_flash_landing_baseline_count" class="text_pole" type="number" min="1" max="99" step="1" value="5" inputmode="numeric">
+                    <small class="st_flash_hint" data-i18n="Messages included when Landing rebuilds the baseline (default 5).">
+                        Messages included when Landing rebuilds the baseline (default 5).
+                    </small>
+                </label>
+            </div>
+
+        </div>
+    </div>
+</div>

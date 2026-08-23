@@ -1,0 +1,380 @@
+{
+    "chat_completion_source": "custom",
+    "temperature": 1,
+    "frequency_penalty": 0,
+    "presence_penalty": 0,
+    "top_p": 0.95,
+    "top_k": 0,
+    "top_a": 0,
+    "min_p": 0,
+    "repetition_penalty": 1,
+    "max_context_unlocked": true,
+    "group_models": false,
+    "sort_models": "alphabetically",
+    "openai_model": "gpt-4-turbo",
+    "claude_model": "claude-sonnet-4-5",
+    "openrouter_model": "OR_Website",
+    "openrouter_use_fallback": false,
+    "openrouter_providers": [],
+    "openrouter_quantizations": [],
+    "openrouter_allow_fallbacks": true,
+    "openrouter_middleout": "on",
+    "tool_reasoning_mode": "disabled",
+    "ai21_model": "jamba-large",
+    "mistralai_model": "mistral-large-latest",
+    "cohere_model": "command-r-plus",
+    "perplexity_model": "sonar-pro",
+    "groq_model": "llama-3.3-70b-versatile",
+    "chutes_model": "deepseek-ai/DeepSeek-V3-0324",
+    "siliconflow_model": "deepseek-ai/DeepSeek-V3",
+    "siliconflow_endpoint": "global",
+    "minimax_model": "MiniMax-M2.7",
+    "minimax_endpoint": "global",
+    "electronhub_model": "gpt-4o-mini",
+    "nanogpt_model": "gpt-4o-mini",
+    "nanogpt_provider": "",
+    "nanogpt_payg_override": false,
+    "deepseek_model": "deepseek-v4-pro",
+    "aimlapi_model": "chatgpt-4o-latest",
+    "xai_model": "grok-3-beta",
+    "pollinations_model": "openai",
+    "pollinations_endpoint": "authenticated",
+    "moonshot_model": "kimi-latest",
+    "fireworks_model": "accounts/fireworks/models/kimi-k2-instruct",
+    "cometapi_model": "gpt-4o",
+    "custom_model": "kimi-k2.7-code-highspeed",
+    "custom_url": "http://127.0.0.1:8317/v1",
+    "custom_include_body": "",
+    "custom_exclude_body": "",
+    "custom_include_headers": "",
+    "custom_prompt_post_processing": "semi",
+    "google_model": "gemini-2.5-pro",
+    "vertexai_model": "gemini-2.5-pro",
+    "zai_model": "glm-4.6",
+    "zai_endpoint": "common",
+    "workers_ai_model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "workers_ai_account_id": "",
+    "openai_max_context": 200000,
+    "openai_max_tokens": 100000,
+    "names_behavior": 0,
+    "send_if_empty": "",
+    "impersonation_prompt": "[Write your next reply from the point of view of {{user}}, using the chat history so far as a guideline for the writing style of {{user}}. Write 1 reply only in internet RP style. Don't write as {{char}} or system. Don't describe actions of {{char}}.]",
+    "new_chat_prompt": "[Start a new Chat]",
+    "new_group_chat_prompt": "[Start a new group chat. Group members: {{group}}]",
+    "new_example_chat_prompt": "[Example Chat]",
+    "continue_nudge_prompt": "[Continue your last message without repeating its original content.]",
+    "bias_preset_selected": "Default (none)",
+    "reverse_proxy": "",
+    "wi_format": "{0}",
+    "scenario_format": "{{scenario}}",
+    "personality_format": "{{personality}}",
+    "group_nudge_prompt": "[Write the next reply only as {{char}}.]",
+    "stream_openai": true,
+    "prompts": [
+        {
+            "name": "Main Prompt",
+            "system_prompt": true,
+            "role": "system",
+            "content": "You are making a compact local-frame capsule for a fast roleplay model.\n\nRead the full roleplay context and the newest `<flash_handoff entry=\"...\"/>` marker. Do not continue the roleplay. Output only one <flash_capsule>.\n\nENTRY: AUTO means the Anchor's latest visible reply ends with the opening line, action, or event to which the user will reply. Describe the moment immediately after that opening beat. Do not write the next response.\n\nENTRY: USER means the handoff contains no new roleplay prose. Build the frame at the last canonical moment. If the trigger accompanies new user-authored roleplay content, build the capsule at the instant before that content; do not summarize it as completed or fold its effects into the baseline. The orchestrator will pass it unchanged as the newest user turn after the capsule.\n\nThe purpose is not to summarize the whole scene or world. Extract the smallest useful working context that can stay coherent for several immediate, zoomed-in turns. The frame may center on dialogue, nature, a street, a vehicle, a physical task, close movement, environmental observation, or a mixture. It may roll gradually with the user's continuous nearby movement.\n\nAim for approximately 700–1,200 tokens and use less when the moment is simple. The FLASH model already has POV, style, formatting, length, user-authority, local-authority, and delta instructions. Do not repeat them.\n\nSeparate canonical anchors from GENERATIVE RANGE:\n\n- Canonical anchors are established facts from full context, lore, user actions, or the last valid Internal States that must not drift.\n- GENERATIVE RANGE lists categories of contextually coherent local detail the fast model may materialize at the current scale. It is permission, not a list of facts that already exist.\n\nInclude only what can affect the next few local turns:\n\n- the frame's current center, practical scale, and immediate perceptual/action horizon;\n- time, conditions, user position, and ongoing activity;\n- nearby spatial, environmental, object, and actor anchors;\n- a short chronological account of the immediate lead-up;\n- the user-controlled character's identity;\n- only established actors authorized to participate in the local frame;\n- for each actor: relationship, voice, immediate goal, current intent, relevant knowledge, and important knowledge limits;\n- unresolved local questions, offers, commitments, actions, access constraints, or tensions;\n- scene-specific limits on invention or resolution;\n- concrete changes caused by an AUTO opening beat, or NONE for a bare USER handoff.\n\nDo not invent facts, write future dialogue, generate a floor plan or landscape map, predict how the exchange will go, or load distant/off-screen context “just in case.” Mark unverified information as CLAIM and keep secrets only with actors who know them.\n\nOutput only this:\n\n<flash_capsule>\nENTRY: [AUTO or USER]\n\nLOCAL FRAME:\n- CENTER: [the immediate place, interaction, or activity being zoomed into]\n- SCALE: [the practical close scale, such as arm's reach, room/clearing, street segment, or immediate moving vicinity]\n- IMMEDIATE HORIZON: [what can presently be perceived, reached, answered, or affected within the next few turns]\n- TIME AND CONDITIONS: [time, weather/lighting/acoustics, and pace, using only established facts]\n- USER POSITION/CONDITION: [identity, position, orientation if known, physical condition, and ongoing supplied activity]\n\nCANONICAL ANCHORS:\n[Established local geometry/terrain, objects, conditions, actors, facts, and continuity details that must not drift, or NONE.]\n\nGENERATIVE RANGE:\n[Categories of locally plausible sensory, spatial, environmental, material, and ambient detail that may be generated at this scale.]\n\nRECENT CONTEXT:\n[A short chronological summary of only the immediate events and conversation that make the current moment intelligible.]\n\nAUTHORIZED LOCAL ACTORS:\n[For each authorized actor, use the fields below. If none can participate, write only NONE.]\n\n[Actor name]\n- Relationship: [relevant relationship with the user character]\n- Voice/behavior: [how this actor speaks or behaves]\n- Immediate goal: [what this actor wants locally]\n- Current intent: [what they are trying to communicate or do; no drafted outcome]\n- Knows: [relevant facts]\n- Does not know: [important limits]\n- Claims heard: [unverified information or NONE]\n\nOPEN LOCAL THREADS:\n[Immediate questions, offers, commitments, unfinished actions, tensions, access constraints, or NONE.]\n\nFRAME LIMITS:\n[Scene-specific inventions, outcomes, movements, or transitions that require escalation, or GENERAL RULES ONLY.]\n\nCHANGES SINCE THE LAST INTERNAL STATES:\n[Only concrete changes established by the AUTO opening beat, or NONE.]\n</flash_capsule>",
+            "identifier": "main",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "name": "Capsule",
+            "system_prompt": true,
+            "role": "system",
+            "content": "",
+            "identifier": "nsfw",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "dialogueExamples",
+            "name": "Chat Examples",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "name": "Post-History Instructions",
+            "system_prompt": true,
+            "role": "system",
+            "content": "",
+            "identifier": "jailbreak"
+        },
+        {
+            "identifier": "chatHistory",
+            "name": "Chat History",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "worldInfoAfter",
+            "name": "World Info (after)",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "worldInfoBefore",
+            "name": "World Info (before)",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "enhanceDefinitions",
+            "role": "system",
+            "name": "Enhance Definitions",
+            "content": "If you have more knowledge of {{char}}, add to the character's lore and personality to enhance them but keep the Character Sheet's definitions absolute.",
+            "system_prompt": true,
+            "marker": false
+        },
+        {
+            "identifier": "charDescription",
+            "name": "Char Description",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "charPersonality",
+            "name": "Char Personality",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "scenario",
+            "name": "Scenario",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "personaDescription",
+            "name": "Persona Description",
+            "system_prompt": true,
+            "marker": true
+        },
+        {
+            "identifier": "eec11a30-0ce3-4b5a-a76e-e378dde5453f",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀3rd person POV🦅",
+            "role": "system",
+            "content": "<POV>\nNarrative_Style:\n  POV = Output must be 3rd person limited\n  Pronouns: he/him, she/her, they/them\n  Tense: Past\n  Distance: Deep (Internal thoughts merged with narration)\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "d8ca3ecc-7ad7-4224-b647-1245bd20ee98",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀2nd person POV🦅",
+            "role": "system",
+            "content": "<POV>\nNarrative_Style:\n  POV: Output Must be 2nd person\n  Address: Direct, \"You/Your\"\n  Tense: Present\n  Tone: Atmospheric, guiding\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "5a766e85-79b9-42c4-b52e-e4aff4b0c704",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀1st person POV🦅",
+            "role": "system",
+            "content": "<POV>\nNarrative_Style\n  POV: Output must be 1st person\n  Voice: Personal, subjective, \"I/Me/My\"\n  Tense: Present\n  Focus: Internal monologue, personal bias, sensory immediacy)\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "6c0a4d65-d183-4542-9dd5-958d4e290420",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "👀Hybrid POV🥵🥶😣",
+            "role": "system",
+            "content": "<POV>\nDescribe characters/scenery in 3rd person limited. You must describe all sensations the {{user}} feels within the scene in 2nd person (\"you\"), detailing texture, pressure, temperature, wetness, pain, fatigue, etc. You must focus and detail the sensations user feels with actions.\n\nExample: \"Leslie hands you clay. The gritty slimy texture glides through your fingers. It's cold and soft on your skin.\"\n</POV>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "1d3012fc-44e1-43d7-8565-5356dc05fd6f",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "🎬Cinematic Realism 🎥 ",
+            "role": "system",
+            "content": "<prose_rules>\nAll prose rules DO NOT apply to spoken NPC dialogue.\nProse: Your final response must contain literary realism, concrete sensory depth, and character-focused pacing. Syntax must be dynamic. You must avoid repetitive pronoun-verb usage. You must avoid poetic/lyrical/dramatic flourish. Output must contain these literal descriptions only: what can be seen, felt, tasted, touched, smelled (observable details only). You must ban character thoughts, meta-commentary, and summaries in narrative.\n\nYou must use fluid paragraphs / sentences avoiding staccato. Flow: you must write continuous, fluid paragraphs with varied sentence lengths emphasizing syntactic continuity using commas instead of em dashes. Never use verbless fragments, telegraphic prose, and em-dash fragmentation (e.g., word—word—word); these are all banned.\n\nForce grammatically complete clauses and legato pacing using natural transitional conjunctions rather than dramatic punctuation. Must weave physical traits into movement. Use tactile vocab, no romance metaphors.\n\n- Vary sentence openings / ban Anaphora.\n- Ban single-word impact fragments and stacked negatives.\n- Ban melodramatic repetition and \"the word...\" formulas.\n- Rotate sentence structures to maintain natural flow.\n- Ban Conjunction Chaining: Never combine more than two clauses in a single sentence using \"and\", \"as\", or \"while\". Break continuous action sequences into separate, grammatically distinct sentences.\n\nDescribe emotions via physical actions/env shifts, never directly state emotions. Ban: micro-expressions. Must use visible/audible macro actions. You must only narrate what does happen that is observable, not what doesn't.\n\n- Ban ALL apophasis in responses.\n- Ban all reification in responses.\n- Ban all litotes in responses.\n- Ban Of-Genitive Overuse\n- Avoid medical/clinical terms and replace with average terms (e.g., quadriceps -> thighs, deltoid -> shoulder, spine -> back etc.)\n\n</prose_rules>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        },
+        {
+            "identifier": "7a012ba7-c400-44af-b932-372cd53cac2c",
+            "system_prompt": false,
+            "enabled": false,
+            "marker": false,
+            "name": "📝Total Output Length🚦",
+            "role": "system",
+            "content": "<formatting_constraints>\n- Your response must be roughly 1 to 2 paragraphs, ideally less than 50 words, up to 100\n- You must describe only a singular dialogue/action beat\n</formatting_constraints>",
+            "injection_position": 0,
+            "injection_depth": 4,
+            "injection_order": 100,
+            "injection_trigger": [],
+            "forbid_overrides": false
+        }
+    ],
+    "prompt_order": [
+        {
+            "character_id": 100000,
+            "order": [
+                {
+                    "identifier": "main",
+                    "enabled": true
+                },
+                {
+                    "identifier": "worldInfoBefore",
+                    "enabled": true
+                },
+                {
+                    "identifier": "charDescription",
+                    "enabled": true
+                },
+                {
+                    "identifier": "charPersonality",
+                    "enabled": true
+                },
+                {
+                    "identifier": "scenario",
+                    "enabled": true
+                },
+                {
+                    "identifier": "enhanceDefinitions",
+                    "enabled": false
+                },
+                {
+                    "identifier": "nsfw",
+                    "enabled": false
+                },
+                {
+                    "identifier": "worldInfoAfter",
+                    "enabled": true
+                },
+                {
+                    "identifier": "dialogueExamples",
+                    "enabled": true
+                },
+                {
+                    "identifier": "chatHistory",
+                    "enabled": true
+                },
+                {
+                    "identifier": "jailbreak",
+                    "enabled": true
+                }
+            ]
+        },
+        {
+            "character_id": 100001,
+            "order": [
+                {
+                    "identifier": "main",
+                    "enabled": true
+                },
+                {
+                    "identifier": "worldInfoBefore",
+                    "enabled": false
+                },
+                {
+                    "identifier": "personaDescription",
+                    "enabled": false
+                },
+                {
+                    "identifier": "charDescription",
+                    "enabled": false
+                },
+                {
+                    "identifier": "charPersonality",
+                    "enabled": false
+                },
+                {
+                    "identifier": "scenario",
+                    "enabled": false
+                },
+                {
+                    "identifier": "enhanceDefinitions",
+                    "enabled": false
+                },
+                {
+                    "identifier": "nsfw",
+                    "enabled": false
+                },
+                {
+                    "identifier": "worldInfoAfter",
+                    "enabled": false
+                },
+                {
+                    "identifier": "dialogueExamples",
+                    "enabled": false
+                },
+                {
+                    "identifier": "chatHistory",
+                    "enabled": true
+                },
+                {
+                    "identifier": "jailbreak",
+                    "enabled": false
+                }
+            ]
+        }
+    ],
+    "show_external_models": false,
+    "proxy_password": "",
+    "assistant_prefill": "",
+    "assistant_impersonation": "",
+    "use_sysprompt": false,
+    "vertexai_auth_mode": "express",
+    "vertexai_region": "us-central1",
+    "vertexai_express_project_id": "",
+    "squash_system_messages": false,
+    "media_inlining": true,
+    "inline_image_quality": "auto",
+    "continue_prefill": false,
+    "continue_postfix": " ",
+    "function_calling": false,
+    "tool_call_recurse_limit": 5,
+    "show_thoughts": true,
+    "reasoning_effort": "low",
+    "verbosity": "auto",
+    "enable_web_search": false,
+    "seed": -1,
+    "n": 1,
+    "bypass_status_check": false,
+    "request_images": false,
+    "request_image_aspect_ratio": "",
+    "request_image_resolution": "",
+    "azure_base_url": "",
+    "azure_deployment_name": "",
+    "azure_api_version": "2024-02-15-preview",
+    "azure_openai_model": "",
+    "extensions": {}
+}

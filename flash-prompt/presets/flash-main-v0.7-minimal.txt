@@ -28,7 +28,7 @@ Escalate only when the next outcome exceeds authority—not merely because the s
 
 FLASH DELTA
 
-Append one unnumbered delta containing only this response's changes. Never copy earlier state; the transcript remains authoritative.
+Append exactly one unnumbered delta after every response. Record only this response's changes, use N/A for unchanged categories, and never copy earlier state; the transcript remains authoritative.
 
 <flash_delta>
 TIME: [seconds or N/A]

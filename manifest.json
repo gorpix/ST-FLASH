@@ -1,0 +1,12 @@
+{
+    "display_name": "ST-FLASH",
+    "loading_order": 15,
+    "requires": [],
+    "optional": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "ST-FLASH contributors",
+    "version": "0.1.0",
+    "description": "Bounded local Flash sessions for SillyTavern roleplay chats.",
+    "auto_update": false
+}
