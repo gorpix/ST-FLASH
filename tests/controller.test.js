@@ -352,6 +352,24 @@ test('valid Flash output strips the delta, stores it with a stable ID, and recor
     assert.equal(generated.id, stableId);
 });
 
+test('Flash escalation waits for GENERATION_ENDED before starting Landing', async () => {
+    const escalation = `<flash_delta>\nTIME: N/A\nPOSITION: N/A\nCONDITION: N/A\nKNOWLEDGE: N/A\nPROPOSAL: N/A\nPOSSESSION: N/A\nCOMMITMENT: N/A\nOTHER: N/A\n</flash_delta>\n<flash_escalate reason="outside Flash authority"/>`;
+    const harness = await acceptIntoFlash(makeHarness());
+    await processFlashOutput(harness, escalation);
+
+    assert.equal(readSession(harness.metadata).phase, PHASES.FLASH);
+    assert.equal(harness.calls.generate.filter((call) => call.role === 'landing').length, 0);
+
+    harness.controller.handleGenerationFinished('ended');
+    for (let attempt = 0; attempt < 20 && readSession(harness.metadata).phase !== PHASES.IDLE; attempt += 1) {
+        await tick();
+    }
+
+    assert.equal(harness.calls.generate.filter((call) => call.role === 'landing').length, 1);
+    assert.equal(readSession(harness.metadata).phase, PHASES.IDLE);
+    assert.match(harness.chat.at(-1).mes, /<internal_states>/u);
+});
+
 test('malformed or missing Flash delta is ignored and enters RECOVERY', async () => {
     const harness = await acceptIntoFlash(makeHarness({
         flashOutput: 'Rex replies, but forgets the required ledger.',

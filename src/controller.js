@@ -742,7 +742,19 @@ export class FlashController {
 
     handleGenerationFinished(reason) {
         const session = this.readSession();
-        if (reason === 'stopped') this.activeGeneration = null;
+        if (reason === 'stopped') {
+            this.activeGeneration = null;
+            this.autoLandQueued = false;
+        }
+        if (reason === 'ended' && session.phase === PHASES.FLASH && this.autoLandQueued && !this.activeGeneration) {
+            // MESSAGE_RECEIVED fires before SillyTavern fully releases its
+            // generation lock. Start Landing only after GENERATION_ENDED;
+            // otherwise Generate('normal') can return without creating a
+            // message and surface as EMPTY_ASSISTANT_RESPONSE.
+            this.autoLandQueued = false;
+            setTimeout(() => void this.land(), 0);
+            return;
+        }
         if (session.phase === PHASES.FLASH && !this.activeGeneration) {
             this.callUi('showFlashStatus', {
                 session,
@@ -1006,10 +1018,6 @@ export class FlashController {
         await this.persistChat({ throwOnError: true });
         if (parsed.escalation && !this.autoLandQueued) {
             this.autoLandQueued = true;
-            setTimeout(() => {
-                this.autoLandQueued = false;
-                void this.land();
-            }, 0);
         }
     }
 
