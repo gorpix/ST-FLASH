@@ -68,6 +68,7 @@ export function createEmptySession(overrides = {}) {
     continuationMode: overrides.continuationMode ?? null,
     initialUserMessageId: overrides.initialUserMessageId ?? null,
     continuationUserMessageId: overrides.continuationUserMessageId ?? null,
+    landingTriggerMessageId: overrides.landingTriggerMessageId ?? null,
     capsule: overrides.capsule ?? null,
     flashTurn: Number.isInteger(overrides.flashTurn) ? overrides.flashTurn : 0,
     flashMessageIds: Array.isArray(overrides.flashMessageIds) ? [...overrides.flashMessageIds] : [],

@@ -1330,12 +1330,12 @@ export class FlashController {
                 'Reconcile it and produce the concluding prose plus the complete final Internal States.',
                 'Do not output an audit or a capsule.',
             ].join('\n'));
-            // A Flash transcript ends on an assistant message. SillyTavern's
-            // normal generator does not reliably create another assistant
-            // message without an intervening user turn. Continue the final
-            // Flash bubble under the Landing role, validate the appended text,
-            // then replace that bubble with the canonical Landing response.
-            await this.generateLandingReplacement({ requireStates: true, operation: 'landing' });
+            // A Flash transcript ends on an assistant message. Give the host
+            // one tagged user boundary so its ordinary generator reliably
+            // creates a new Landing assistant response. The trigger is
+            // archived with the handoff/transcript immediately afterward.
+            await this.ensureLandingTrigger(session, contextToken);
+            await this.generateNewAssistant({ requireStates: true, operation: 'landing' });
             this.assertContextToken(contextToken, 'landing');
             const messages = this.chat();
             const landingIndex = messages.length - 1;
@@ -1370,6 +1370,7 @@ export class FlashController {
                 continuationMode: null,
                 initialUserMessageId: null,
                 continuationUserMessageId: null,
+                landingTriggerMessageId: null,
                 ignoredMessageIds: [],
                 ownedIgnoreMessageIds: [],
                 failedMessageIds: [],
@@ -1491,33 +1492,47 @@ export class FlashController {
         }
     }
 
-    async generateLandingReplacement({ requireStates = true, operation = 'landing' } = {}) {
+    async ensureLandingTrigger(session, contextToken) {
         const messages = this.chat();
-        const target = messages[messages.length - 1];
-        const beforeText = text(target?.mes);
-        if (!isAssistantMessage(target)) {
-            throw new FlashControllerError('There is no final Flash response to replace during Landing.', {
-                code: 'LANDING_TARGET_MISSING',
-                operation,
+        const markerId = session?.landingTriggerMessageId;
+        const last = messages[messages.length - 1];
+        const lastId = last ? ensureMessageId(last, messages.length - 1) : null;
+        const lastIsOwnedTrigger = Boolean(
+            last?.is_user
+            && last?.extra?.st_flash?.landingTriggerSessionId === session?.sessionId
+            && (!markerId || idsEqual(lastId, markerId)),
+        );
+        if (lastIsOwnedTrigger) return lastId;
+
+        if (typeof this.sendMessageAsUser !== 'function') {
+            throw new FlashControllerError('Landing cannot create its generation boundary.', {
+                code: 'LANDING_TRIGGER_UNAVAILABLE',
+                operation: 'landing',
             });
         }
-
-        await this.generateContinuation({ requireStates, operation });
-        const combined = text(target.mes);
-        const landingText = combined.slice(beforeText.length).trim();
-        if (!landingText) {
-            throw new FlashControllerError('Landing continuation produced no replacement text.', {
-                code: 'EMPTY_ASSISTANT_RESPONSE',
-                operation,
+        const triggerText = '[ST-FLASH: Landing response requested. Continue the completed Flash exchange now.]';
+        const inserted = await this.sendMessageAsUser(triggerText);
+        this.assertContextToken(contextToken, 'landing-trigger');
+        const index = this.chat().indexOf(inserted);
+        const targetIndex = index >= 0 ? index : this.chat().length - 1;
+        const message = this.chat()[targetIndex];
+        if (!message?.is_user) {
+            throw new FlashControllerError('Landing generation boundary was not inserted as a user message.', {
+                code: 'LANDING_TRIGGER_INVALID',
+                operation: 'landing',
             });
         }
-
-        target.mes = landingText;
-        syncActiveSwipe(target);
-        if (typeof this.updateMessageBlock === 'function') {
-            try { this.updateMessageBlock(messages.length - 1, target); } catch { /* optional UI */ }
-        }
-        return target;
+        const id = ensureMessageId(message, targetIndex);
+        message.extra = message.extra && typeof message.extra === 'object' ? message.extra : {};
+        message.extra.st_flash = {
+            ...(message.extra.st_flash || {}),
+            landingTriggerSessionId: session.sessionId,
+            landingTrigger: true,
+        };
+        this.updateSession({ landingTriggerMessageId: id });
+        await this.persistMetadata({ immediate: true, throwOnError: true });
+        await this.persistChat({ throwOnError: true });
+        return id;
     }
 
     async finishOrdinaryPhase() {
@@ -1539,6 +1554,7 @@ export class FlashController {
             continuationMode: null,
             initialUserMessageId: null,
             continuationUserMessageId: null,
+            landingTriggerMessageId: null,
             capsule: null,
             flashTurn: 0,
             flashMessageIds: [],
@@ -1579,6 +1595,7 @@ export class FlashController {
                     continuationMode: null,
                     initialUserMessageId: null,
                     continuationUserMessageId: null,
+                    landingTriggerMessageId: null,
                     ignoredMessageIds: [],
                     ownedIgnoreMessageIds: [],
                     failedMessageIds: [],
