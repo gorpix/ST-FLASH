@@ -182,6 +182,30 @@ function capsuleResponseDiagnostic(value) {
     return `received ${source.length} characters; ENTRY ${/^\s*ENTRY:\s*(?:AUTO|USER)\s*$/imu.test(source) ? 'present' : 'absent'}; core headings ${headings.length}/3`;
 }
 
+function syntheticMissingDelta() {
+    return {
+        raw: null,
+        synthetic: true,
+        body: [
+            'TIME: N/A',
+            'POSITION: N/A',
+            'CONDITION: N/A',
+            'KNOWLEDGE: N/A',
+            'PROPOSAL: N/A',
+            'POSSESSION: N/A',
+            'COMMITMENT: N/A',
+            'OTHER: Flash model omitted its delta; Landing must reconcile this turn from the visible transcript.',
+        ].join('\n'),
+    };
+}
+
+function isMissingDeltaOnly(parsed) {
+    return Boolean(parsed?.visible?.trim())
+        && !parsed?.delta
+        && parsed?.errors?.length === 1
+        && parsed.errors[0]?.code === 'FLASH_DELTA_MISSING';
+}
+
 function sanitizeModelInjection(value) {
     // SillyTavern expands {{macros}} inside extension prompts. Capsules and
     // deltas are model-generated evidence, never executable prompt source.
@@ -970,18 +994,21 @@ export class FlashController {
             });
         }
         const parsed = parseFlashOutput(message.mes, { requireDelta: true });
-        if (!parsed.valid || !parsed.delta?.body?.trim()) {
+        const missingDeltaFallback = isMissingDeltaOnly(parsed);
+        const effectiveDelta = missingDeltaFallback ? syntheticMissingDelta() : parsed.delta;
+        if ((!parsed.valid && !missingDeltaFallback) || !effectiveDelta?.body?.trim()) {
             this.markFailedMessage(message, index, 'flash-reply', parsed.errors);
             await this.persistMetadata({ immediate: true, throwOnError: true });
             await this.persistChat({ throwOnError: true });
             this.activeGeneration = null;
-            throw new FlashControllerError('Flash response did not satisfy the delta protocol.', {
+            const codes = parsed.errors.map((item) => item.code).filter(Boolean);
+            throw new FlashControllerError(`Flash response delta is invalid: ${codes.join(', ') || 'unknown protocol error'}.`, {
                 code: 'FLASH_OUTPUT_INVALID',
                 operation: 'flash-reply',
                 cause: parsed.errors,
             });
         }
-        const delta = parsed.delta ? { ...cloneJson(parsed.delta, parsed.delta), turn: session.flashTurn + 1 } : null;
+        const delta = { ...cloneJson(effectiveDelta, effectiveDelta), turn: session.flashTurn + 1 };
         message.mes = parsed.visible;
         syncActiveSwipe(message);
         message.extra = message.extra && typeof message.extra === 'object' ? message.extra : {};
@@ -993,6 +1020,7 @@ export class FlashController {
             delta,
             escalation: parsed.escalation ? cloneJson(parsed.escalation, parsed.escalation) : null,
             errors: cloneJson(parsed.errors, []),
+            deltaFallback: missingDeltaFallback,
         };
         const stableMessageId = ensureMessageId(message, index);
         const next = recordFlashTurn(this.metadata(), {
@@ -1019,6 +1047,49 @@ export class FlashController {
         if (parsed.escalation && !this.autoLandQueued) {
             this.autoLandQueued = true;
         }
+    }
+
+    salvageFailedMissingDelta(session = this.readSession()) {
+        const failedIds = session.failedMessageIds || [];
+        const id = failedIds[failedIds.length - 1];
+        if (id == null) return null;
+        const index = findMessageIndex(this.chat(), id);
+        const message = index >= 0 ? this.chat()[index] : null;
+        const details = message?.extra?.st_flash?.failureDetails;
+        if (!message || !Array.isArray(details) || details.length !== 1 || details[0]?.code !== 'FLASH_DELTA_MISSING') return null;
+
+        const parsed = parseFlashOutput(message.mes, { requireDelta: false });
+        if (!parsed.valid || parsed.delta || !parsed.visible.trim()) return null;
+        const delta = { ...syntheticMissingDelta(), turn: session.flashTurn + 1 };
+        message.mes = parsed.visible;
+        syncActiveSwipe(message);
+        message.extra = message.extra && typeof message.extra === 'object' ? message.extra : {};
+        message.extra.st_flash = message.extra.st_flash && typeof message.extra.st_flash === 'object'
+            ? message.extra.st_flash : {};
+        delete message.extra.st_flash.failed;
+        delete message.extra.st_flash.failedOperation;
+        delete message.extra.st_flash.failureDetails;
+        Object.assign(message.extra.st_flash, {
+            processedSessionId: session.sessionId,
+            phase: 'FLASH',
+            turn: delta.turn,
+            delta,
+            escalation: parsed.escalation ? cloneJson(parsed.escalation, parsed.escalation) : null,
+            errors: [{ code: 'FLASH_DELTA_MISSING', recovered: true }],
+            deltaFallback: true,
+        });
+        const owned = (session.ownedIgnoreMessageIds || []).some((candidate) => idsEqual(candidate, id));
+        if (owned) this.unmarkIgnored([id]);
+        recordFlashTurn(this.metadata(), { messageId: id, delta });
+        const next = this.updateSession((current) => ({
+            failedMessageIds: (current.failedMessageIds || []).filter((candidate) => !idsEqual(candidate, id)),
+            ownedIgnoreMessageIds: (current.ownedIgnoreMessageIds || []).filter((candidate) => !idsEqual(candidate, id)),
+        }));
+        this.inject(INJECTION_KEYS.DELTAS, this.deltaInjection(next.deltas));
+        if (typeof this.updateMessageBlock === 'function') {
+            try { this.updateMessageBlock(index, message); } catch { /* optional UI */ }
+        }
+        return { session: next, message, parsed };
     }
 
     async acceptFlash(userText = null) {
@@ -1495,8 +1566,10 @@ export class FlashController {
                     this.inject(INJECTION_KEYS.DELTAS, this.deltaInjection(session.deltas));
                     this.inject(INJECTION_KEYS.CONTROL, this.flashControlInjection());
                     await this.roleSwitcher.switchTo('flash');
+                    const salvaged = operation === 'flash-reply' ? this.salvageFailedMissingDelta(session) : null;
                     this.transition(PHASES.FLASH, { error: null });
                     await this.persistMetadata({ immediate: true, throwOnError: true });
+                    if (salvaged) await this.persistChat({ throwOnError: true });
                     if (operation === 'flash-entry' && session.pendingUserText) {
                         let insertedId = this.findRecentUserMessageId(session.pendingUserText, this.readSession());
                         if (!insertedId) {
@@ -1509,7 +1582,7 @@ export class FlashController {
                         await this.persistChat({ throwOnError: true });
                         nextOperation = 'flash-reply';
                         await this.generateNewAssistant({ operation: 'flash-reply' });
-                    } else if (operation === 'flash-reply') {
+                    } else if (operation === 'flash-reply' && !salvaged) {
                         await this.generateNewAssistant({ operation: 'flash-reply' });
                     }
                     this.callUi('showFlashStatus', { session: this.readSession(), onLand: () => this.land(), onAbort: () => this.abort() });

@@ -370,18 +370,50 @@ test('Flash escalation waits for GENERATION_ENDED before starting Landing', asyn
     assert.match(harness.chat.at(-1).mes, /<internal_states>/u);
 });
 
-test('malformed or missing Flash delta is ignored and enters RECOVERY', async () => {
+test('missing Flash delta keeps usable prose and synthesizes a Landing reconciliation marker', async () => {
     const harness = await acceptIntoFlash(makeHarness({
         flashOutput: 'Rex replies, but forgets the required ledger.',
     }), 'Seed the malformed Flash turn.');
     const generated = harness.chat[harness.chat.length - 1];
     await harness.controller.handleMessageReceived(harness.chat.length - 1, 'normal');
     const session = readSession(harness.metadata);
+    assert.equal(session.phase, PHASES.FLASH);
+    assert.equal(generated.extra.st_flash.deltaFallback, true);
+    assert.equal(generated.extra.st_flash.delta.synthetic, true);
+    assert.match(generated.extra.st_flash.delta.body, /reconcile this turn from the visible transcript/u);
+    assert.equal(generated.extra[IGNORE], undefined);
+    assert.equal(session.flashTurn, 1);
+});
+
+test('duplicate Flash deltas remain fatal instead of choosing one silently', async () => {
+    const duplicate = `Visible reply.\n<flash_delta>TIME: N/A</flash_delta>\n<flash_delta>TIME: N/A</flash_delta>`;
+    const harness = await acceptIntoFlash(makeHarness(), 'Seed the malformed Flash turn.');
+    const generated = await processFlashOutput(harness, duplicate);
+    const session = readSession(harness.metadata);
     assert.equal(session.phase, PHASES.RECOVERY);
     assert.equal(session.error.operation, 'flash-reply');
     assert.equal(generated.extra.st_flash.failed, true);
     assert.equal(generated.extra[IGNORE], true);
     assert.equal(session.flashTurn, 0);
+});
+
+test('Retry salvages a previously failed missing-delta response without another model call', async () => {
+    const harness = await acceptIntoFlash(makeHarness());
+    const generated = message(`assistant-${harness.chat.length}`, false, 'A usable reply whose ledger was omitted.');
+    harness.chat.push(generated);
+    harness.controller.markFailedMessage(generated, harness.chat.length - 1, 'flash-reply', [{ code: 'FLASH_DELTA_MISSING' }]);
+    await harness.controller.enterRecovery(new Error('Old missing-delta failure'), 'flash-reply');
+    const callsBefore = harness.calls.generate.length;
+
+    await harness.controller.retryRecovery();
+
+    const session = readSession(harness.metadata);
+    assert.equal(session.phase, PHASES.FLASH);
+    assert.equal(session.flashTurn, 1);
+    assert.equal(harness.calls.generate.length, callsBefore);
+    assert.equal(generated.extra.st_flash.failed, undefined);
+    assert.equal(generated.extra.st_flash.deltaFallback, true);
+    assert.equal(generated.extra[IGNORE], undefined);
 });
 
 test('Landing creates final prose and states, archives the entire handoff-through-Flash range, and restores runtime state', async () => {
