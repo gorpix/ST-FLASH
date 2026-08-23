@@ -1330,7 +1330,12 @@ export class FlashController {
                 'Reconcile it and produce the concluding prose plus the complete final Internal States.',
                 'Do not output an audit or a capsule.',
             ].join('\n'));
-            await this.generateNewAssistant({ requireStates: true, operation: 'landing' });
+            // A Flash transcript ends on an assistant message. SillyTavern's
+            // normal generator does not reliably create another assistant
+            // message without an intervening user turn. Continue the final
+            // Flash bubble under the Landing role, validate the appended text,
+            // then replace that bubble with the canonical Landing response.
+            await this.generateLandingReplacement({ requireStates: true, operation: 'landing' });
             this.assertContextToken(contextToken, 'landing');
             const messages = this.chat();
             const landingIndex = messages.length - 1;
@@ -1484,6 +1489,35 @@ export class FlashController {
             }
             throw error;
         }
+    }
+
+    async generateLandingReplacement({ requireStates = true, operation = 'landing' } = {}) {
+        const messages = this.chat();
+        const target = messages[messages.length - 1];
+        const beforeText = text(target?.mes);
+        if (!isAssistantMessage(target)) {
+            throw new FlashControllerError('There is no final Flash response to replace during Landing.', {
+                code: 'LANDING_TARGET_MISSING',
+                operation,
+            });
+        }
+
+        await this.generateContinuation({ requireStates, operation });
+        const combined = text(target.mes);
+        const landingText = combined.slice(beforeText.length).trim();
+        if (!landingText) {
+            throw new FlashControllerError('Landing continuation produced no replacement text.', {
+                code: 'EMPTY_ASSISTANT_RESPONSE',
+                operation,
+            });
+        }
+
+        target.mes = landingText;
+        syncActiveSwipe(target);
+        if (typeof this.updateMessageBlock === 'function') {
+            try { this.updateMessageBlock(messages.length - 1, target); } catch { /* optional UI */ }
+        }
+        return target;
     }
 
     async finishOrdinaryPhase() {

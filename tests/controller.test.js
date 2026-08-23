@@ -183,7 +183,7 @@ function makeHarness({
         calls.generate.push({ type, options, role });
         if (type === 'continue') {
             const target = chat[chat.length - 1];
-            target.mes += continuationAppend;
+            target.mes += role === 'landing' ? landingOutput : continuationAppend;
             return target;
         }
         eventSource.emit(EVENT_TYPES.GENERATION_STARTED, 'normal', options);
@@ -451,9 +451,13 @@ test('Landing creates final prose and states, archives the entire handoff-throug
     assert.equal(harness.powerUser.auto_swipe, true);
     assert.equal(harness.powerUser.auto_continue.enabled, true);
     assert.ok(harness.calls.summary.some((entry) => entry[0] === 'restore'));
+    assert.ok(harness.calls.generate.some((call) => call.role === 'landing' && call.type === 'continue'));
+    assert.ok(!harness.calls.generate.some((call) => call.role === 'landing' && call.type === 'normal'));
 
     const landing = harness.chat[harness.chat.length - 1];
+    assert.equal(landing, flashMessage, 'Landing should replace the final Flash bubble in place');
     assert.match(landing.mes, /<internal_states>/);
+    assert.doesNotMatch(landing.mes, /Rex gives a short, immediate answer/u);
     assert.equal(landing.is_system, false);
     for (const item of harness.chat.slice(handoffIndex, harness.chat.length - 1)) {
         assert.equal(item.is_system, true, `message ${item.id} was not archived`);
@@ -462,7 +466,7 @@ test('Landing creates final prose and states, archives the entire handoff-throug
     }
     assert.ok(sessionAfter.archivedMessageIds.includes('a-anchor'));
     assert.ok(sessionAfter.archivedMessageIds.includes('user-inserted-1'));
-    assert.ok(sessionAfter.archivedMessageIds.includes(flashMessage.id));
+    assert.ok(!sessionAfter.archivedMessageIds.includes(flashMessage.id));
 });
 
 test('blank decline uses continuation append, while decline text inserts once and creates a new assistant', async () => {
