@@ -96,6 +96,16 @@ test('parseFlashOutput accepts the minimal bare escalation marker', () => {
   assert.equal(result.escalation.reason, null);
 });
 
+test('parseFlashOutput accepts a bare escalation marker before the delta', () => {
+  const result = parseFlashOutput('Safe immediate beat.\n\n<flash_escalate>\n\n<flash_delta>TIME: N/A</flash_delta>', {
+    requireDelta: true,
+  });
+  assert.equal(result.valid, true);
+  assert.equal(result.visible, 'Safe immediate beat.');
+  assert.equal(result.escalation.raw, '<flash_escalate>');
+  assert.equal(result.delta.body, 'TIME: N/A');
+});
+
 test('parseFlashOutput allows a response with no delta or escalation', () => {
   const result = parseFlashOutput('"Yeah, okay."');
   assert.equal(result.valid, true);
