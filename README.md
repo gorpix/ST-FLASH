@@ -1,6 +1,10 @@
 # ST-FLASH
 
-ST-FLASH is an experimental adaptive multi-model roleplay orchestrator for SillyTavern.
+ST-FLASH is a sorta roleplay orchestrator for SillyTavern.
+Built around the Freaky Frankenstein 5.2 preset, Summaryception and Kimi K3 / K2.7-code-highspeed models.
+
+Good luck with other configurations.
+It should generally work as long as your fast model has structured output.
 
 The five-role v0.1 pipeline uses three model profiles:
 
@@ -10,9 +14,9 @@ The five-role v0.1 pipeline uses three model profiles:
 - **Landing:** Kimi K3 Low or High writes concluding prose and reconstructs complete FF5.2 Internal States.
 - **Continuation:** Kimi K3 Low handles both decline branches: appending to the interrupted Anchor reply when no user text is supplied, or answering the user's decline/steering text as a new ordinary turn.
 
-Anchor runs on the A profile, Capsule and Flash share the B profile, and Landing and Continuation share the C profile. `FF5.2 custom` is not an ST-FLASH route.
+Anchor runs on the A profile, Capsule and Flash share the B profile, and Landing and Continuation share the C profile. `FF5.2 custom` is not an ST-FLASH route. Not really sure it's needed either.
 
-The prompt protocol has been validated manually, including a long Flash exchange followed by successful Landing reconciliation. Extension implementation is in progress on the `implementation` branch; the controller, role adapters, Summaryception adapter, settings UI, prepared presets, and automated unit tests are present. The live SillyTavern installation is not modified until the integration suite is green and a backup is created.
+Undocumented module edits have been made to the FF5.2 preset.
 
 ## Runtime flow
 
@@ -43,3 +47,15 @@ node tools/prepare-presets.mjs --source presets/sillytavern --target presets/pre
 ## Baseline
 
 The initial commit is the pre-implementation checkpoint copied from the working home-PC setup on 2026-08-22. The SillyTavern installation, private chats, character data, API credentials, and generated media are intentionally outside this repository.
+
+# Requirements
+
+Unknown: Summaryception
+
+# Pending
+
+Testing,
+
+# To-Do
+
+Lots of stuff. Delegation/escalation prompt tuning is first priority. Make it preset-agnostic.
