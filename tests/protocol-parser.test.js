@@ -68,6 +68,14 @@ test('parseFlashCapsule can validate an expected ENTRY without changing opaque b
   assert.ok(result.errors.some((error) => error.code === 'CAPSULE_ENTRY_MISMATCH'));
 });
 
+test('parseFlashCapsule accepts harmless tag and ENTRY capitalization changes', () => {
+  const result = parseFlashCapsule('<FLASH_CAPSULE>\nENTRY: auto\nLOCAL FRAME:\n- CENTER: desk\n</FLASH_CAPSULE>', {
+    expectedEntry: 'AUTO',
+  });
+  assert.equal(result.valid, true);
+  assert.match(result.body, /ENTRY: auto/u);
+});
+
 test('parseFlashOutput removes wrappers and preserves an opaque delta', () => {
   const delta = '<flash_delta>TIME: ~4 seconds\nPOSITION: Rex sits down</flash_delta>';
   const source = `Rex sits down.\n\n${delta}\n<flash_escalate reason="time &amp; place"/>\n`;

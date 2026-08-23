@@ -140,15 +140,39 @@ function hasForbiddenProtocol(message) {
     return /<flash_(?:handoff|capsule|delta|escalate)\b/i.test(text(message?.mes));
 }
 
-function validateCapsuleBody(value) {
+function capsuleBodyIssues(value, expectedEntry = null) {
     const body = text(value).trim();
-    if (body.length < 120) return false;
-    return [
-        /^\s*ENTRY:\s*(?:AUTO|USER)\s*$/imu,
-        /^LOCAL FRAME:\s*$/imu,
-        /^RECENT CONTEXT:\s*$/imu,
-        /^AUTHORIZED LOCAL ACTORS:\s*$/imu,
-    ].every((pattern) => pattern.test(body));
+    const issues = [];
+    if (body.length < 120) issues.push('body is shorter than 120 characters');
+
+    // Preserve a useful structural floor while tolerating harmless Markdown
+    // decoration such as "**LOCAL FRAME:**" or "## RECENT CONTEXT".
+    const headings = new Set(body.split(/\r?\n/u).map((line) => line
+        .trim()
+        .replace(/^#{1,6}\s*/u, '')
+        .replace(/[*_`]/gu, '')
+        .replace(/[:\s]+$/u, '')
+        .replace(/[\s_-]+/gu, ' ')
+        .toUpperCase()));
+    const entryMatch = /^\s*ENTRY:\s*(AUTO|USER)\s*$/imu.exec(body);
+    if (!entryMatch) issues.push('missing a valid ENTRY field');
+    else if (expectedEntry && entryMatch[1].toUpperCase() !== String(expectedEntry).toUpperCase()) {
+        issues.push(`ENTRY is ${entryMatch[1].toUpperCase()}, expected ${String(expectedEntry).toUpperCase()}`);
+    }
+    for (const heading of ['LOCAL FRAME', 'RECENT CONTEXT', 'AUTHORIZED LOCAL ACTORS']) {
+        if (!headings.has(heading)) issues.push(`missing ${heading}`);
+    }
+    return issues;
+}
+
+function wrapperlessCapsuleCandidate(value) {
+    const source = text(value).replace(/^\uFEFF/u, '');
+    const entryStart = source.search(/^\s*ENTRY:\s*(?:AUTO|USER)\s*$/imu);
+    if (entryStart < 0) return null;
+    return source
+        .slice(entryStart)
+        .replace(/\n\s*```(?:text|xml)?\s*$/iu, '')
+        .trim();
 }
 
 function sanitizeModelInjection(value) {
@@ -1006,18 +1030,36 @@ export class FlashController {
                 });
                 this.assertContextToken(contextToken, 'capsule');
                 const parsedCapsule = parseFlashCapsule(raw, {
-                    requireOnlyWrapper: true,
+                    // Only the capsule body is forwarded. Ignore harmless
+                    // reasoning, Markdown fences, or a short preface outside
+                    // the single wrapper instead of wasting a model retry.
+                    requireOnlyWrapper: false,
                     expectedEntry: session.entry,
                 });
-                if (!parsedCapsule.valid || !validateCapsuleBody(parsedCapsule.capsule)) {
-                    throw new FlashControllerError('Capsule generation returned an invalid wrapper.', {
+                let capsule = parsedCapsule.capsule;
+                let parserErrors = parsedCapsule.errors;
+                if (!parsedCapsule.matched) {
+                    // A fully structured body is unambiguous even if a fast
+                    // model drops only the outer XML tags. Recover it from the
+                    // ENTRY line; prose without the required structure still
+                    // fails closed.
+                    const candidate = wrapperlessCapsuleCandidate(raw);
+                    if (candidate && capsuleBodyIssues(candidate, session.entry).length === 0) {
+                        capsule = candidate;
+                        parserErrors = [];
+                    }
+                }
+                const bodyIssues = capsule ? capsuleBodyIssues(capsule, session.entry) : [];
+                if (parserErrors.length || bodyIssues.length || !capsule) {
+                    const issueCodes = parserErrors.map((item) => item.code);
+                    const details = [...issueCodes, ...bodyIssues];
+                    throw new FlashControllerError(`Capsule rejected: ${details.join('; ') || 'unknown format error'}.`, {
                         code: 'CAPSULE_INVALID',
-                        cause: parsedCapsule.errors,
+                        cause: { parser: parserErrors, body: bodyIssues },
                     });
                 }
 
                 const current = this.readSession();
-                const capsule = parsedCapsule.capsule;
                 this.updateSession({ capsule, pendingUserText: pending });
                 const handoffIndex = this.findHandoffIndex(current);
                 if (handoffIndex < 0) throw new FlashControllerError('The Anchor handoff message is missing.', {

@@ -7,7 +7,10 @@
  */
 
 const HANDOFF_PATTERN = /<flash_handoff(?:\s+entry="(AUTO|USER)")?\s*\/>/g;
-const CAPSULE_PATTERN = /<flash_capsule(?:\s[^>]*)?>([\s\S]*?)<\/flash_capsule\s*>/g;
+// Capsule models sometimes preserve the requested tags but alter their case.
+// Treat XML-ish protocol tag names as case-insensitive; the body remains
+// completely opaque and duplicate wrappers are still rejected.
+const CAPSULE_PATTERN = /<flash_capsule(?:\s[^>]*)?>([\s\S]*?)<\/flash_capsule\s*>/gi;
 const DELTA_PATTERN = /<flash_delta(?:\s[^>]*)?>([\s\S]*?)<\/flash_delta\s*>/g;
 const ESCALATE_PATTERN = /<flash_escalate(?:\s+reason="([^"]*)")?\s*\/>/g;
 
@@ -112,11 +115,11 @@ export function parseFlashCapsule(input, { requireOnlyWrapper = false, expectedE
       errors.push(makeMatchError('Capsule has no valid ENTRY field', {
         code: 'CAPSULE_ENTRY_MISSING',
       }));
-    } else if (entryMatch[1] !== expectedEntry) {
+    } else if (entryMatch[1].toUpperCase() !== String(expectedEntry).toUpperCase()) {
       errors.push(makeMatchError(`Capsule ENTRY ${entryMatch[1]} does not match expected ${expectedEntry}`, {
         code: 'CAPSULE_ENTRY_MISMATCH',
-        actual: entryMatch[1],
-        expected: expectedEntry,
+        actual: entryMatch[1].toUpperCase(),
+        expected: String(expectedEntry).toUpperCase(),
       }));
     }
   }

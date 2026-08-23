@@ -307,6 +307,26 @@ test('AUTO accept validates the capsule, enters Flash, and inserts initial user 
     assert.match(harness.calls.injections.get(INJECTION_KEYS.CAPSULE), /ENTRY: AUTO/);
 });
 
+test('Capsule intake ignores surrounding reasoning and accepts Markdown-decorated headings', async () => {
+    const decorated = `I will now provide the requested capsule.\n\n\`\`\`text\n<FLASH_CAPSULE>\nENTRY: auto\n\n**LOCAL FRAME:**\n- CENTER: dorm desk\n\n## RECENT CONTEXT\nRex opened the exchange.\n\n**AUTHORIZED LOCAL ACTORS:**\nRex is present and authorized. This body is deliberately long enough to remain useful to Flash.\n</FLASH_CAPSULE>\n\`\`\``;
+    const harness = makeHarness({ capsule: decorated });
+    await acceptIntoFlash(harness);
+    const session = readSession(harness.metadata);
+    assert.equal(session.phase, PHASES.FLASH);
+    assert.match(session.capsule, /LOCAL FRAME/u);
+    assert.doesNotMatch(session.capsule, /requested capsule/u);
+});
+
+test('Capsule intake recovers a complete structured body when only its wrapper is missing', async () => {
+    const wrapperless = `The wrapper was accidentally omitted.\n\nENTRY: AUTO\n\nLOCAL FRAME:\n- CENTER: dorm desk\n\nRECENT CONTEXT:\nRex opened the exchange and is waiting for the immediate reply.\n\nAUTHORIZED LOCAL ACTORS:\nRex is present and authorized. The remaining local details are concrete enough for several short turns.\n\`\`\``;
+    const harness = makeHarness({ capsule: wrapperless });
+    await acceptIntoFlash(harness);
+    const session = readSession(harness.metadata);
+    assert.equal(session.phase, PHASES.FLASH);
+    assert.match(session.capsule, /^ENTRY: AUTO/u);
+    assert.doesNotMatch(session.capsule, /wrapper was accidentally omitted/u);
+});
+
 test('valid Flash output strips the delta, stores it with a stable ID, and records its turn', async () => {
     const harness = await acceptIntoFlash(makeHarness(), 'Seed the first Flash turn.');
     // The pending-user path already produced a generated assistant; process
