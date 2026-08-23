@@ -61,6 +61,14 @@ export function flashStatusPresentation(state = {}) {
   };
 }
 
+export function formatGenerationDuration(milliseconds) {
+  const totalSeconds = Math.max(0, Number(milliseconds) || 0) / 1000;
+  if (totalSeconds < 60) return `${totalSeconds.toFixed(1)}s`;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = (totalSeconds % 60).toFixed(1).padStart(4, '0');
+  return `${minutes}:${seconds}`;
+}
+
 const noop = () => {};
 
 function isElement(value) {
@@ -490,14 +498,25 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
   append(label, detail);
   const progress = makeElement(doc, 'div', {
     id: 'st_flash_capsule_progress',
-    className: 'st_flash_progress',
+    className: 'st_flash_progress_wrap',
     'data-st-flash-role': 'capsule-progress',
+    hidden: 'hidden',
+  });
+  const progressTrack = makeElement(doc, 'div', {
+    className: 'st_flash_progress',
     role: 'progressbar',
     'aria-label': 'Generating Flash capsule',
     'aria-valuetext': 'Generating capsule',
-    hidden: 'hidden',
   });
-  append(progress, makeElement(doc, 'span', { className: 'st_flash_progress_indicator' }));
+  append(progressTrack, makeElement(doc, 'span', { className: 'st_flash_progress_indicator' }));
+  const progressTimer = makeElement(doc, 'span', {
+    id: 'st_flash_capsule_timer',
+    className: 'st_flash_progress_timer',
+    'data-st-flash-role': 'capsule-timer',
+    'aria-label': 'Capsule generation elapsed time',
+  }, '0.0s');
+  append(progressTrack, progressTimer);
+  append(progress, progressTrack);
   const turnCount = makeElement(doc, 'span', { id: 'st_flash_turn_count', className: 'st_flash_turn_count', 'data-st-flash-role': 'turn-count' });
   append(turnCount, makeElement(doc, 'span', {}, 'Turn'));
   const turnValue = makeElement(doc, 'strong', {}, '0');
@@ -531,16 +550,69 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
   const handleAbort = (event) => callbacks.onAbort(event);
   landButton.addEventListener?.('click', handleLand);
   abortButton.addEventListener?.('click', handleAbort);
+  let capsuleStartedAt = null;
+  let capsuleInterval = null;
+  let capsuleHoldTimeout = null;
+  let capsuleFadeTimeout = null;
+  let previousPhase = '';
+  const clearCapsuleTimers = () => {
+    if (capsuleInterval != null) clearInterval(capsuleInterval);
+    if (capsuleHoldTimeout != null) clearTimeout(capsuleHoldTimeout);
+    if (capsuleFadeTimeout != null) clearTimeout(capsuleFadeTimeout);
+    capsuleInterval = null;
+    capsuleHoldTimeout = null;
+    capsuleFadeTimeout = null;
+  };
+  const updateCapsuleTimer = () => {
+    if (capsuleStartedAt == null) return;
+    progressTimer.textContent = formatGenerationDuration(Date.now() - capsuleStartedAt);
+  };
+  const startCapsuleProgress = () => {
+    clearCapsuleTimers();
+    capsuleStartedAt = Date.now();
+    progress.hidden = false;
+    progress.classList?.remove('st_flash_progress_complete', 'st_flash_progress_fading');
+    progressTrack.setAttribute?.('aria-valuetext', 'Generating capsule');
+    updateCapsuleTimer();
+    capsuleInterval = setInterval(updateCapsuleTimer, 100);
+  };
+  const finishCapsuleProgress = () => {
+    if (capsuleStartedAt == null) return;
+    if (capsuleInterval != null) clearInterval(capsuleInterval);
+    capsuleInterval = null;
+    updateCapsuleTimer();
+    capsuleStartedAt = null;
+    progress.hidden = false;
+    progress.classList?.add('st_flash_progress_complete');
+    progressTrack.setAttribute?.('aria-valuetext', 'Capsule complete');
+    capsuleHoldTimeout = setTimeout(() => {
+      progress.classList?.add('st_flash_progress_fading');
+      capsuleFadeTimeout = setTimeout(() => {
+        progress.hidden = true;
+        progress.classList?.remove('st_flash_progress_complete', 'st_flash_progress_fading');
+        capsuleHoldTimeout = null;
+        capsuleFadeTimeout = null;
+      }, 350);
+    }, 1000);
+  };
+  const hideCapsuleProgress = () => {
+    clearCapsuleTimers();
+    capsuleStartedAt = null;
+    progress.hidden = true;
+    progress.classList?.remove('st_flash_progress_complete', 'st_flash_progress_fading');
+  };
   let state = {};
   const setState = (nextState = {}) => {
     state = { ...state, ...nextState };
     const presentation = flashStatusPresentation(state);
+    if (presentation.phase === 'CAPSULING' && previousPhase !== 'CAPSULING') startCapsuleProgress();
+    else if (presentation.phase !== 'CAPSULING' && previousPhase === 'CAPSULING') finishCapsuleProgress();
+    previousPhase = presentation.phase;
     const rawTurn = state.turnCount ?? state.turn ?? state.flashTurn;
     const turn = Number.isFinite(Number(rawTurn)) ? Math.max(0, Math.trunc(Number(rawTurn))) : 0;
     turnValue.textContent = String(turn);
     title.textContent = toText(presentation.label);
     detail.textContent = toText(presentation.detail);
-    progress.hidden = !presentation.showProgress;
     turnCount.hidden = !presentation.showTurn;
     landButton.hidden = !presentation.showTurn;
     const canLand = presentation.canLand;
@@ -559,6 +631,8 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
       return status;
     },
     hide: () => {
+      hideCapsuleProgress();
+      previousPhase = '';
       status.hidden = true;
       state = { ...state, active: false };
       return status;
@@ -571,6 +645,7 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
     },
     isVisible: () => !status.hidden,
     destroy: () => {
+      hideCapsuleProgress();
       landButton.removeEventListener?.('click', handleLand);
       abortButton.removeEventListener?.('click', handleAbort);
       status.remove?.();

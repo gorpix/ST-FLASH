@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flashStatusPresentation } from '../src/ui.js';
+import { flashStatusPresentation, formatGenerationDuration } from '../src/ui.js';
 
 test('Capsuling status shows an indeterminate progress state and hides Flash-only controls', () => {
   const status = flashStatusPresentation({ phase: 'CAPSULING' });
@@ -17,4 +17,10 @@ test('Flash status restores turn and Landing controls without the Capsule progre
   assert.equal(status.showProgress, false);
   assert.equal(status.showTurn, true);
   assert.equal(status.canLand, true);
+});
+
+test('Capsule timer formats tenths of seconds and longer durations compactly', () => {
+  assert.equal(formatGenerationDuration(0), '0.0s');
+  assert.equal(formatGenerationDuration(12_340), '12.3s');
+  assert.equal(formatGenerationDuration(65_240), '1:05.2');
 });
