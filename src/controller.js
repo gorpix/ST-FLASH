@@ -175,6 +175,13 @@ function wrapperlessCapsuleCandidate(value) {
         .trim();
 }
 
+function capsuleResponseDiagnostic(value) {
+    const source = text(value);
+    const headings = ['LOCAL FRAME', 'RECENT CONTEXT', 'AUTHORIZED LOCAL ACTORS']
+        .filter((heading) => new RegExp(`^\\s*(?:#{1,6}\\s*)?(?:\\*\\*)?${heading}(?:\\*\\*)?\\s*:`, 'imu').test(source));
+    return `received ${source.length} characters; ENTRY ${/^\s*ENTRY:\s*(?:AUTO|USER)\s*$/imu.test(source) ? 'present' : 'absent'}; core headings ${headings.length}/3`;
+}
+
 function sanitizeModelInjection(value) {
     // SillyTavern expands {{macros}} inside extension prompts. Capsules and
     // deltas are model-generated evidence, never executable prompt source.
@@ -1026,7 +1033,10 @@ export class FlashController {
                 const raw = await this.generateQuietPrompt({
                     quietPrompt: this.capsuleRequestPrompt(session),
                     responseLength: this.settings.capsuleResponseLength,
-                    removeReasoning: true,
+                    // Kimi providers and reasoning templates do not always
+                    // agree about where reasoning ends. Keep the raw response;
+                    // capsule parsing extracts only the structured final body.
+                    removeReasoning: false,
                 });
                 this.assertContextToken(contextToken, 'capsule');
                 const parsedCapsule = parseFlashCapsule(raw, {
@@ -1052,7 +1062,7 @@ export class FlashController {
                 const bodyIssues = capsule ? capsuleBodyIssues(capsule, session.entry) : [];
                 if (parserErrors.length || bodyIssues.length || !capsule) {
                     const issueCodes = parserErrors.map((item) => item.code);
-                    const details = [...issueCodes, ...bodyIssues];
+                    const details = [...issueCodes, ...bodyIssues, capsuleResponseDiagnostic(raw)];
                     throw new FlashControllerError(`Capsule rejected: ${details.join('; ') || 'unknown format error'}.`, {
                         code: 'CAPSULE_INVALID',
                         cause: { parser: parserErrors, body: bodyIssues },

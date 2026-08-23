@@ -13,7 +13,10 @@ export const ROLE_KEYS = Object.freeze({
 export const DEFAULT_SETTINGS = Object.freeze({
   enabled: true,
   landingBaselineMessages: 5,
-  capsuleResponseLength: 1800,
+  // Kimi's visible capsule can be ~1,200 tokens after a sizeable reasoning
+  // block. This is a ceiling, not a requested output length; leave enough
+  // room for the model to reach its final structured answer.
+  capsuleResponseLength: 3200,
   profiles: {
     anchor: '',
     flash: '',
@@ -43,9 +46,14 @@ export const INJECTION_KEYS = Object.freeze({
 });
 
 export function mergeSettings(stored = {}) {
+  const storedCapsuleLength = Number(stored.capsuleResponseLength);
+  const capsuleResponseLength = Number.isFinite(storedCapsuleLength) && storedCapsuleLength > 1800
+    ? storedCapsuleLength
+    : DEFAULT_SETTINGS.capsuleResponseLength;
   return {
     ...DEFAULT_SETTINGS,
     ...stored,
+    capsuleResponseLength,
     profiles: { ...DEFAULT_SETTINGS.profiles, ...(stored.profiles ?? {}) },
     presets: { ...DEFAULT_SETTINGS.presets, ...(stored.presets ?? {}) },
   };

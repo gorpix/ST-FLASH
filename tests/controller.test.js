@@ -113,6 +113,7 @@ function makeHarness({
     const eventSource = new EventEmitter();
     const calls = {
         generate: [],
+        quiet: [],
         sendUser: [],
         role: [],
         summary: [],
@@ -221,7 +222,10 @@ function makeHarness({
         roleSwitcher,
         summaryception,
         ui,
-        generateQuietPrompt: async () => capsule,
+        generateQuietPrompt: async (options) => {
+            calls.quiet.push(options);
+            return capsule;
+        },
         generate,
         sendMessageAsUser,
         setExtensionPrompt: (key, value) => calls.injections.set(key, value),
@@ -305,6 +309,8 @@ test('AUTO accept validates the capsule, enters Flash, and inserts initial user 
     assert.equal(harness.powerUser.auto_swipe, false);
     assert.equal(harness.powerUser.auto_continue.enabled, false);
     assert.match(harness.calls.injections.get(INJECTION_KEYS.CAPSULE), /ENTRY: AUTO/);
+    assert.equal(harness.calls.quiet.at(-1).removeReasoning, false);
+    assert.equal(harness.calls.quiet.at(-1).responseLength, 3200);
 });
 
 test('Capsule intake ignores surrounding reasoning and accepts Markdown-decorated headings', async () => {
