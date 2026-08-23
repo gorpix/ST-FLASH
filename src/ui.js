@@ -88,7 +88,10 @@ function append(parent, child) {
 
 function resolveRuntimeRoot(root, doc, textarea) {
   if (root?.id === 'send_textarea' && root.parentElement) return root.parentElement;
-  if (isElement(root)) return root;
+  // A Document has querySelector too, but it cannot accept arbitrary sibling
+  // elements via appendChild. When createUi() is called without an explicit
+  // runtime root, fall through to SillyTavern's composer host instead.
+  if (isElement(root) && root.nodeType !== 9) return root;
   if (textarea?.parentElement) return textarea.parentElement;
   return query(doc, '#send_form') || query(doc, '#send_textarea')?.parentElement || doc?.body || doc;
 }
