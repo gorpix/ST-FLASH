@@ -370,6 +370,23 @@ test('Flash escalation waits for GENERATION_ENDED before starting Landing', asyn
     assert.match(harness.chat.at(-1).mes, /<internal_states>/u);
 });
 
+test('Flash escalation starts Landing when GENERATION_ENDED precedes MESSAGE_RECEIVED', async () => {
+    const escalation = `<flash_escalate>\n<flash_delta>\nTIME: N/A\nPOSITION: N/A\nCONDITION: N/A\nKNOWLEDGE: N/A\nPROPOSAL: N/A\nPOSSESSION: N/A\nCOMMITMENT: N/A\nOTHER: N/A\n</flash_delta>`;
+    const harness = await acceptIntoFlash(makeHarness());
+
+    await harness.controller.handleGenerationStarted('normal');
+    harness.controller.handleGenerationFinished('ended');
+    harness.chat.push(message(`assistant-${harness.chat.length}`, false, escalation));
+    await harness.controller.handleMessageReceived(harness.chat.length - 1, 'normal');
+    for (let attempt = 0; attempt < 20 && readSession(harness.metadata).phase !== PHASES.IDLE; attempt += 1) {
+        await tick();
+    }
+
+    assert.equal(harness.calls.generate.filter((call) => call.role === 'landing').length, 1);
+    assert.equal(readSession(harness.metadata).phase, PHASES.IDLE);
+    assert.match(harness.chat.at(-1).mes, /<internal_states>/u);
+});
+
 test('missing Flash delta keeps usable prose and synthesizes a Landing reconciliation marker', async () => {
     const harness = await acceptIntoFlash(makeHarness({
         flashOutput: 'Rex replies, but forgets the required ledger.',

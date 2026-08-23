@@ -757,6 +757,7 @@ export class FlashController {
                 chatRef: this.chat(),
                 metadataRef: this.metadata(),
                 type,
+                finished: false,
             };
         } catch (error) {
             try { this.stopGeneration?.(); } catch { /* optional host API */ }
@@ -770,6 +771,13 @@ export class FlashController {
         if (reason === 'stopped') {
             this.activeGeneration = null;
             this.autoLandQueued = false;
+        }
+        if (reason === 'ended' && this.activeGeneration) {
+            // Some SillyTavern/provider combinations emit GENERATION_ENDED
+            // before MESSAGE_RECEIVED. Keep the ownership record alive for
+            // message validation, but remember that Landing may start as soon
+            // as the response has been parsed and persisted.
+            this.activeGeneration.finished = true;
         }
         if (reason === 'ended' && session.phase === PHASES.FLASH && this.autoLandQueued && !this.activeGeneration) {
             // MESSAGE_RECEIVED fires before SillyTavern fully releases its
@@ -1028,25 +1036,37 @@ export class FlashController {
             messageId: stableMessageId,
             delta,
         });
-        this.activeGeneration = null;
         this.inject(INJECTION_KEYS.DELTAS, this.deltaInjection(next.deltas));
         if (typeof this.updateMessageBlock === 'function') {
             setTimeout(() => {
                 try { this.updateMessageBlock(index, message); } catch { /* optional UI */ }
             }, 0);
         }
+        await this.persistMetadata({ immediate: true, throwOnError: true });
+        await this.persistChat({ throwOnError: true });
+
+        // GENERATION_ENDED may have arrived before or during the asynchronous
+        // persistence above. Clear ownership only after both writes so an
+        // automatic Landing cannot race the accepted Flash message to disk.
+        const generationEnded = generation.finished === true;
+        this.activeGeneration = null;
         this.callUi('showFlashStatus', {
             session: next,
             turn: next.flashTurn,
             escalation: parsed.escalation,
             errors: parsed.errors,
+            canLand: generationEnded && !parsed.escalation,
+            generating: !generationEnded,
             onLand: () => this.land(),
             onAbort: () => this.abort(),
         });
-        await this.persistMetadata({ immediate: true, throwOnError: true });
-        await this.persistChat({ throwOnError: true });
-        if (parsed.escalation && !this.autoLandQueued) {
-            this.autoLandQueued = true;
+        if (parsed.escalation) {
+            if (generationEnded) {
+                this.autoLandQueued = false;
+                setTimeout(() => void this.land(), 0);
+            } else {
+                this.autoLandQueued = true;
+            }
         }
     }
 
