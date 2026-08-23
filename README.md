@@ -26,6 +26,14 @@ Undocumented module edits have been made to the FF5.2 preset.
 4. Landing always writes concluding prose plus complete Internal States, then archives the raw Flash segment from future model context.
 5. Summaryception is enabled for Anchor and both Continuation paths, disabled during Flash and Landing, and restored before the next Anchor turn.
 
+## Installation
+
+In SillyTavern, open **Extensions → Install Extension**, paste the repository URL below, and install:
+
+`https://github.com/gorpix/ST-FLASH`
+
+Then import the five JSON presets from `presets/prepared/` and configure the three model profiles and exact preset names in the ST-FLASH settings panel.
+
 ## Repository layout
 
 - `docs/` — architecture and pre-implementation decisions.

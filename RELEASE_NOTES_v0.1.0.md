@@ -21,7 +21,7 @@ ST-FLASH is an experimental bounded roleplay orchestrator for SillyTavern. It le
 
 ## Installation
 
-1. Copy the repository contents into SillyTavern's `public/scripts/extensions/third-party/ST-FLASH` directory, or install the attached extension zip into that directory.
+1. In SillyTavern, open **Extensions → Install Extension**, paste `https://github.com/gorpix/ST-FLASH`, and install.
 2. Import the five JSON files from `presets/prepared/` into the appropriate SillyTavern preset collection.
 3. Configure the three model profiles and the exact preset names in the ST-FLASH settings panel.
 4. Keep a backup of the working SillyTavern presets and chat data before testing.
