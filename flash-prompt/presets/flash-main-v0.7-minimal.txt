@@ -24,7 +24,7 @@ ESCALATION
 
 Escalate only when the next outcome exceeds authority—not merely because the scene has stakes or surprise. Render the safe immediate beat, then append:
 
-<flash_escalate reason="[concise reason]"/>
+<flash_escalate>
 
 FLASH DELTA
 

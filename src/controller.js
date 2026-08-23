@@ -700,6 +700,7 @@ export class FlashController {
         return [
             'FLASH MODE IS ACTIVE.',
             'Answer only the newest user turn using the capsule, visible Flash transcript, and accumulated deltas.',
+            'If escalation is required, append exactly <flash_escalate>. Do not write the Landing response yourself.',
             'Append exactly one <flash_delta> for this response.',
         ].join('\n');
     }

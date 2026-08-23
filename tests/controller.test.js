@@ -353,7 +353,7 @@ test('valid Flash output strips the delta, stores it with a stable ID, and recor
 });
 
 test('Flash escalation waits for GENERATION_ENDED before starting Landing', async () => {
-    const escalation = `<flash_delta>\nTIME: N/A\nPOSITION: N/A\nCONDITION: N/A\nKNOWLEDGE: N/A\nPROPOSAL: N/A\nPOSSESSION: N/A\nCOMMITMENT: N/A\nOTHER: N/A\n</flash_delta>\n<flash_escalate reason="outside Flash authority"/>`;
+    const escalation = `<flash_delta>\nTIME: N/A\nPOSITION: N/A\nCONDITION: N/A\nKNOWLEDGE: N/A\nPROPOSAL: N/A\nPOSSESSION: N/A\nCOMMITMENT: N/A\nOTHER: N/A\n</flash_delta>\n<flash_escalate>`;
     const harness = await acceptIntoFlash(makeHarness());
     await processFlashOutput(harness, escalation);
 

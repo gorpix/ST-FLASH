@@ -88,6 +88,14 @@ test('parseFlashOutput removes wrappers and preserves an opaque delta', () => {
   assert.equal(result.escalation.raw, '<flash_escalate reason="time &amp; place"/>');
 });
 
+test('parseFlashOutput accepts the minimal bare escalation marker', () => {
+  const result = parseFlashOutput('Safe immediate beat.\n<flash_delta>TIME: N/A</flash_delta>\n<flash_escalate>');
+  assert.equal(result.valid, true);
+  assert.equal(result.visible, 'Safe immediate beat.');
+  assert.equal(result.escalation.raw, '<flash_escalate>');
+  assert.equal(result.escalation.reason, null);
+});
+
 test('parseFlashOutput allows a response with no delta or escalation', () => {
   const result = parseFlashOutput('"Yeah, okay."');
   assert.equal(result.valid, true);

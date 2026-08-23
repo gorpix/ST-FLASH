@@ -12,7 +12,9 @@ const HANDOFF_PATTERN = /<flash_handoff(?:\s+entry="(AUTO|USER)")?\s*\/>/g;
 // completely opaque and duplicate wrappers are still rejected.
 const CAPSULE_PATTERN = /<flash_capsule(?:\s[^>]*)?>([\s\S]*?)<\/flash_capsule\s*>/gi;
 const DELTA_PATTERN = /<flash_delta(?:\s[^>]*)?>([\s\S]*?)<\/flash_delta\s*>/g;
-const ESCALATE_PATTERN = /<flash_escalate(?:\s+reason="([^"]*)")?\s*\/>/g;
+// The bare marker is the canonical low-friction form. Keep accepting the
+// older self-closing/reason-bearing variants for existing transcripts.
+const ESCALATE_PATTERN = /<flash_escalate(?:\s+reason="([^"]*)")?\s*(?:\/>|>(?:\s*<\/flash_escalate\s*>)?)/gi;
 
 function trimEndOnly(value) {
   return String(value ?? '').replace(/\s+$/u, '');
@@ -203,7 +205,7 @@ export function parseFlashOutput(input, { requireDelta = false } = {}) {
       code: 'FLASH_MALFORMED_DELTA',
     }));
   }
-  if (escalations.length === 0 && /<flash_escalate\b/u.test(source)) {
+  if (escalations.length === 0 && /<flash_escalate\b/iu.test(source)) {
     errors.push(makeMatchError('Malformed <flash_escalate> marker', {
       code: 'FLASH_MALFORMED_ESCALATION',
     }));
