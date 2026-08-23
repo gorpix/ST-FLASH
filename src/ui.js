@@ -39,6 +39,28 @@ export const SETTING_FIELD_IDS = Object.freeze({
   landingBaselineMessages: 'st_flash_landing_baseline_count',
 });
 
+export function flashStatusPresentation(state = {}) {
+  const phase = state.phase || state.session?.phase || '';
+  if (phase === 'CAPSULING') {
+    return {
+      phase,
+      label: 'Generating capsule',
+      detail: 'Building the local context for Flash…',
+      showProgress: true,
+      showTurn: false,
+      canLand: false,
+    };
+  }
+  return {
+    phase,
+    label: state.label ?? 'Active Flash',
+    detail: state.detail ?? 'ST-FLASH session is active.',
+    showProgress: false,
+    showTurn: phase === 'FLASH',
+    canLand: state.canLand !== false && phase === 'FLASH',
+  };
+}
+
 const noop = () => {};
 
 function isElement(value) {
@@ -466,6 +488,16 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
   const detail = makeElement(doc, 'span', { className: 'st_flash_status_detail', 'data-st-flash-role': 'status-detail' }, 'ST-FLASH session is active.');
   append(label, title);
   append(label, detail);
+  const progress = makeElement(doc, 'div', {
+    id: 'st_flash_capsule_progress',
+    className: 'st_flash_progress',
+    'data-st-flash-role': 'capsule-progress',
+    role: 'progressbar',
+    'aria-label': 'Generating Flash capsule',
+    'aria-valuetext': 'Generating capsule',
+    hidden: 'hidden',
+  });
+  append(progress, makeElement(doc, 'span', { className: 'st_flash_progress_indicator' }));
   const turnCount = makeElement(doc, 'span', { id: 'st_flash_turn_count', className: 'st_flash_turn_count', 'data-st-flash-role': 'turn-count' });
   append(turnCount, makeElement(doc, 'span', {}, 'Turn'));
   const turnValue = makeElement(doc, 'strong', {}, '0');
@@ -486,6 +518,7 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
   append(actionGroup, landButton);
   append(actionGroup, abortButton);
   append(status, label);
+  append(status, progress);
   append(status, turnCount);
   append(status, actionGroup);
   if (!status.isConnected) append(host, status);
@@ -501,12 +534,16 @@ export function mountFlashStatus(options = {}, legacyCallbacks = {}) {
   let state = {};
   const setState = (nextState = {}) => {
     state = { ...state, ...nextState };
+    const presentation = flashStatusPresentation(state);
     const rawTurn = state.turnCount ?? state.turn ?? state.flashTurn;
     const turn = Number.isFinite(Number(rawTurn)) ? Math.max(0, Math.trunc(Number(rawTurn))) : 0;
     turnValue.textContent = String(turn);
-    if (state.detail != null) detail.textContent = toText(state.detail);
-    if (state.label != null) title.textContent = toText(state.label);
-    const canLand = state.canLand !== false;
+    title.textContent = toText(presentation.label);
+    detail.textContent = toText(presentation.detail);
+    progress.hidden = !presentation.showProgress;
+    turnCount.hidden = !presentation.showTurn;
+    landButton.hidden = !presentation.showTurn;
+    const canLand = presentation.canLand;
     const canAbort = state.canAbort !== false;
     landButton.disabled = !canLand;
     abortButton.disabled = !canAbort;
@@ -704,21 +741,23 @@ export function createUi(callbacks = {}) {
     decision,
     status,
     recovery,
-    showOffer: (offer = {}) => { setInteractionMode('decision'); return decision.show(offer); },
-    showDecisionBar: (offer = {}) => { setInteractionMode('decision'); return decision.show(offer); },
+    showOffer: (offer = {}) => { setInteractionMode('decision'); status.hide(); recovery.hide(); return decision.show(offer); },
+    showDecisionBar: (offer = {}) => { setInteractionMode('decision'); status.hide(); recovery.hide(); return decision.show(offer); },
     hideOffer: () => decision.hide(),
     hideDecisionBar: () => decision.hide(),
     showFlashStatus: (state = {}) => {
       const phase = state.phase || state.session?.phase;
       setInteractionMode(phase === 'FLASH' ? 'flash' : 'busy');
-      return status.show(state);
+      decision.hide();
+      recovery.hide();
+      return status.show({ ...state, phase });
     },
     showFlash: (state = {}) => { setInteractionMode('flash'); return status.show(state); },
     hideFlashStatus: () => status.hide(),
     hideFlash: () => status.hide(),
     setFlashStatus: (state = {}) => status.setState(state),
-    showRecovery: (error) => { setInteractionMode('recovery'); return recovery.show(error); },
-    showError: (error) => { setInteractionMode('recovery'); return recovery.show(error); },
+    showRecovery: (error) => { setInteractionMode('recovery'); decision.hide(); status.hide(); return recovery.show(error); },
+    showError: (error) => { setInteractionMode('recovery'); decision.hide(); status.hide(); return recovery.show(error); },
     hideRecovery: () => recovery.hide(),
     hideError: () => recovery.hide(),
     clearRuntime: () => {
